@@ -1,4 +1,5 @@
 (ns strojure.undertow.websocket.handler
+  "WebSocket connection handler."
   (:require [strojure.undertow.api.types :as types])
   (:import (io.undertow.websockets WebSocketConnectionCallback WebSocketProtocolHandshakeHandler)
            (io.undertow.websockets.core WebSocketChannel)

@@ -1,4 +1,5 @@
 (ns strojure.undertow.api.builder
+  "Helper functions to work with `Undertow$Builder`."
   (:require [strojure.undertow.api.types :as types])
   (:import (io.undertow Undertow Undertow$Builder Undertow$ListenerBuilder Undertow$ListenerType)))
 

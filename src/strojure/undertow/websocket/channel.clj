@@ -1,4 +1,5 @@
 (ns strojure.undertow.websocket.channel
+  "WebSocket channel API for sending and receiving messages."
   (:require [strojure.undertow.api.types :as types])
   (:import (clojure.lang IFn)
            (io.undertow.websockets.core CloseMessage WebSocketCallback WebSocketChannel WebSockets)

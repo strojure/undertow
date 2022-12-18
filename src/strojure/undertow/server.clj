@@ -1,4 +1,5 @@
 (ns strojure.undertow.server
+  "Undertow server functionality (start, stop, options etc.)."
   (:require [strojure.undertow.api.builder :as builder]
             [strojure.undertow.api.types :as types])
   (:import (io.undertow Undertow Undertow$Builder UndertowOptions)

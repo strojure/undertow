@@ -1,4 +1,5 @@
 (ns strojure.undertow.api.exchange
+  "Helper functions to work with `HttpServerExchange`."
   (:import (io.undertow.server Connectors HttpHandler HttpServerExchange)
            (io.undertow.server.session Session SessionConfig SessionManager)
            (java.io OutputStream)))

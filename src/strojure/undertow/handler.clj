@@ -1,4 +1,5 @@
 (ns strojure.undertow.handler
+  "Undertow `HttpHandler` functionality and library of standard handlers."
   (:require [strojure.undertow.api.types :as types]
             [strojure.undertow.websocket.handler :as websocket])
   (:import (clojure.lang MultiFn Sequential)

@@ -1,4 +1,5 @@
 (ns strojure.undertow.api.types
+  "Functions to coerce Clojure types to Undertow Java classes."
   (:import (clojure.lang Fn MultiFn)
            (io.undertow Undertow Undertow$ListenerBuilder)
            (io.undertow.server HttpHandler)
