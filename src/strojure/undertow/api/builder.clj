@@ -56,6 +56,7 @@
 ;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 
 (defn set-server-option
+  "Sets server option."
   (^Undertow$Builder
    [builder [option value]] (set-server-option builder option value))
   (^Undertow$Builder
@@ -64,6 +65,7 @@
      (.setServerOption ^Undertow$Builder builder option value))))
 
 (defn set-socket-option
+  "Sets socket option."
   (^Undertow$Builder
    [builder [option value]] (set-socket-option builder option value))
   (^Undertow$Builder
@@ -72,6 +74,7 @@
      (.setSocketOption ^Undertow$Builder builder option value))))
 
 (defn set-worker-option
+  "Sets worker options."
   (^Undertow$Builder
    [builder [option value]] (set-worker-option builder option value))
   (^Undertow$Builder
@@ -87,6 +90,7 @@
   (reduce set-fn builder entries))
 
 (defn configure
+  "Applies configuration map options to the Undertow builder instance."
   [builder {:keys [port, handler, buffer-size, io-threads, worker-threads, direct-buffers
                    server-options, socket-options, worker-options]}]
   (-> builder
@@ -102,6 +106,7 @@
         (some? direct-buffers) (.setDirectBuffers (boolean direct-buffers)))))
 
 (defn build
+  "Builds and returns Undertow instance."
   ^Undertow
   [builder]
   (.build ^Undertow$Builder builder))
