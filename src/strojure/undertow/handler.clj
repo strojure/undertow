@@ -14,6 +14,7 @@
 ;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 
 (defn wrap-handler
+  "Wraps `handler` chaining with sequence of handler wrappers in `with`."
   [handler with]
   (reduce (fn [next-handler, wrapper]
             ((types/as-wrapper wrapper) (types/as-handler next-handler)))
@@ -26,22 +27,38 @@
     (wrap-handler (last xs) (butlast xs))))
 
 (defn declare-type
-  [-type {:keys [as-handler, as-wrapper, type-alias]}]
+  "Adds multimethods for declarative description of HTTP handlers.
+
+  1) `type` A constant to distinguish specific handler, usually handler function
+            itself.
+  2) Options:
+      - `:as-handler` The function `(fn [obj] handler)` to coerce `obj` to
+                      handler.
+      - `:as-wrapper` The function `(fn [obj] (fn [handler]))` returning
+                      function to wrap another handler.
+      - `:type-alias` The alias for the `type`, usually keyword.
+  "
+  #_{:clj-kondo/ignore [:shadowed-var]}
+  [type {:keys [as-handler, as-wrapper, type-alias]}]
   (assert (or (fn? as-handler) (fn? as-wrapper)))
   (when as-handler
-    (.addMethod ^MultiFn types/as-handler -type as-handler)
+    (.addMethod ^MultiFn types/as-handler type as-handler)
     (when type-alias
       (.addMethod ^MultiFn types/as-handler type-alias as-handler)))
   (when as-wrapper
-    (.addMethod ^MultiFn types/as-wrapper -type as-wrapper)
+    (.addMethod ^MultiFn types/as-wrapper type as-wrapper)
     (when type-alias
       (.addMethod ^MultiFn types/as-wrapper type-alias as-wrapper))))
 
 (defn as-arity-2-wrapper
+  "Converts 2-arity function `(fn [handler obj])` to function `(fn [obj])`
+  returning handler wrapper `(fn [handler] ...)`."
   [f]
   (fn [opts] (fn [handler] (f handler opts))))
 
 (defn as-arity-1-wrapper
+  "Converts 1-arity function `(fn [handler])` to function `(fn [obj])`
+  returning handler wrapper `(fn [handler] ...)`."
   [f]
   (fn [_] f))
 
@@ -259,6 +276,7 @@
 ;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 
 (defn in-memory-session-manager
+  "Return instance of `InMemorySessionManager` given configuration map."
   [{:keys [session-id-generator
            deployment-name
            max-sessions
@@ -275,8 +293,9 @@
             in-memory-session-manager)
 
 (defn session-cookie-config
+  "Returns instance of `SessionCookieConfig` given configuration map."
   #_{:clj-kondo/ignore [:shadowed-var]}
-  [{:keys [cookie-name path domain discard secure http-only max-age comment]}]
+  [{:keys [cookie-name, path, domain, discard, secure, http-only, max-age, comment]}]
   (cond-> (SessionCookieConfig.)
     cookie-name (.setCookieName cookie-name)
     path (.setPath path)
@@ -291,6 +310,23 @@
             session-cookie-config)
 
 (defn session-attachment
+  "Returns a new handler that attaches the session to the request. This handler
+  is also the place where session cookie configuration properties are
+  configured. Note: this approach is not used by Servlet, which has its own
+  session handlers.
+
+  1) `next-handler` The handler that is called after attaching session.
+
+  2) Handler configuration map with options:
+
+      - `session-manager` The instance of `SessionManager` or session manager
+        configuration map. If not specified then `InMemorySessionManager` is used
+        with default settings (see [[in-memory-session-manager]]).
+
+      - `session-config` The instance of `SessionConfig` or session config
+        configuration map. If not specified then `SessionCookieConfig` is used
+        with default settings (see [[session-cookie-config]]).
+  "
   ^SessionAttachmentHandler
   [next-handler {:keys [session-manager, session-config]
                  :or {session-manager {} session-config {}}}]
