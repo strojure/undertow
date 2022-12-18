@@ -167,12 +167,16 @@
 ;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 
 (defn set-fn-as-handler
+  "Permanently assigns coercion of Clojure function to `HttpHandler`. Can be
+  used by adapters like Ring handler adapter."
   [f]
   (alter-var-root #'types/*fn-as-handler* (constantly f)))
 
 ;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 
 (defn define-option
+  "Defines keyword alias for Undertow option. The optional `coerce-fn` is used
+  to coerce option value to correct Java type."
   ([alias option] (define-option alias option identity))
   ([alias option coerce-fn]
    (defmethod types/as-option alias
