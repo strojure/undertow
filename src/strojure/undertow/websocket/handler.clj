@@ -30,6 +30,38 @@
 ;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 
 (defn handshake
+  "Returns a new web socket session handler with optional next handler to invoke
+  if the web socket connection fails. A `HttpHandler` which will process the
+  `HttpServerExchange` and do the actual handshake/upgrade to WebSocket.
+
+  Function arguments:
+
+  - `next-handler` The handler that is invoked if there are no web socket
+                   headers.
+
+  - `callback` The instance of the `WebSocketConnectionCallback` or callback
+               configuration map.
+
+    Callback configuration options:
+
+      - `:on-connect` The function `(fn [{:keys [callback exchange channel]}])`.
+          + Is called once the WebSocket connection is established, which means
+            the handshake was successful.
+
+      - `:on-message` The function `(fn [{:keys [callback channel text data]}])`.
+          + Is called when listener receives a message.
+          + The text message is provided in `:text` and binary message is
+            provided in `:data`.
+
+      - `:on-close` The function `(fn [{:keys [callback channel code reason]}])`.
+          + Is called once the WebSocket connection is closed.
+          + The `:code` is status code to close messages:
+            http://tools.ietf.org/html/rfc6455#section-7.4
+
+      - `:on-error` The function `(fn [{:keys [callback channel error]}])`.
+          + Is called on WebSocket connection error.
+          + Default implementation just closes WebSocket connection.
+  "
   {:arglists '([{:as callback :keys [on-connect, on-message, on-close, on-error]}]
                [next-handler, {:as callback :keys [on-connect, on-message, on-close, on-error]}]
                [callback]
