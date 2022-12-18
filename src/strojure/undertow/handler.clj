@@ -97,6 +97,7 @@
    [config] (path nil config))
   (^PathHandler
    [default-handler {:keys [prefix exact cache-size]}]
+   #_{:clj-kondo/ignore [:shadowed-var]}
    (letfn [(add-prefix-path [this [path handler]]
              (.addPrefixPath ^PathHandler this path (types/as-handler handler)))
            (add-exact-path [this [path handler]]
@@ -274,6 +275,7 @@
             in-memory-session-manager)
 
 (defn session-cookie-config
+  #_{:clj-kondo/ignore [:shadowed-var]}
   [{:keys [cookie-name path domain discard secure http-only max-age comment]}]
   (cond-> (SessionCookieConfig.)
     cookie-name (.setCookieName cookie-name)

@@ -1,7 +1,7 @@
 {:linters {:missing-docstring {:level :warning}
            :redundant-fn-wrapper {:level :warning}
            :shadowed-var {:level :warning
-                          :exclude []
+                          :exclude [alias]
                           :suggest {}}
            :unknown-require-option {:level :off}
            :unsorted-required-namespaces {:level :warning}}
