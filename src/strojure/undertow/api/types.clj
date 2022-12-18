@@ -14,6 +14,11 @@
 ;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 
 (defn object-type
+  "Returns object type to be used as dispatch value for multimethods.
+
+  - for maps returns value of the `:type` key or `:default`.
+  - for other objects returns `(type obj)`.
+  "
   [obj]
   (if (map? obj) (:type obj :default)
                  (type obj)))
@@ -43,6 +48,12 @@
 (.addMethod ^MultiFn as-handler HttpHandler identity)
 
 (def ^:dynamic *fn-as-handler*
+  "The function `(fn [f] handler)` to coerce Clojure functions to `HttpHandler`
+  instances.
+
+  - Default implementation raise exception.
+  - Can be overridden permanently using `server/set-fn-as-handler` function.
+  "
   (fn [f]
     (throw (ex-info (str "Cannot use function as undertow handler: " f "\n"
                          "Define permanent coercion using `server/set-fn-as-handler`.")
@@ -81,7 +92,11 @@
 
 ;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 
-(defmulti as-option (fn [k _] k))
+(defmulti as-option
+  "Coerces option `k` to the pair of Undertow option and value of correct type.
+  Used to create keyword aliases to Java objects of Undertow objects."
+  {:arglists '([k v])}
+  (fn [k _] k))
 
 (defmethod as-option :default
   [option value]
@@ -91,6 +106,7 @@
                          "Use `define-option` to define new options.") {}))))
 
 (defn as-option-map
+  "Coerces Clojure map to Undertow's `OptionMap`."
   ^OptionMap
   [m]
   (if (seq m)
