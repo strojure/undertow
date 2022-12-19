@@ -27,7 +27,7 @@
   (when-let [xs (seq xs)]
     (wrap-handler (last xs) (butlast xs))))
 
-(defn declare-type
+(defn define-type
   "Adds multimethods for declarative description of HTTP handlers.
 
   1) `type` A constant to distinguish specific handler, usually handler function
@@ -37,19 +37,19 @@
                       handler.
       - `:as-wrapper` The function `(fn [obj] (fn [handler]))` returning
                       function to wrap another handler.
-      - `:type-alias` The alias for the `type`, usually keyword.
+      - `:alias` The alias for the `type`, usually keyword.
   "
   #_{:clj-kondo/ignore [:shadowed-var]}
-  [type {:keys [as-handler, as-wrapper, type-alias]}]
+  [type {:keys [as-handler, as-wrapper, alias]}]
   (assert (or (fn? as-handler) (fn? as-wrapper)))
   (when as-handler
     (.addMethod ^MultiFn types/as-handler type as-handler)
-    (when type-alias
-      (.addMethod ^MultiFn types/as-handler type-alias as-handler)))
+    (when alias
+      (.addMethod ^MultiFn types/as-handler alias as-handler)))
   (when as-wrapper
     (.addMethod ^MultiFn types/as-wrapper type as-wrapper)
-    (when type-alias
-      (.addMethod ^MultiFn types/as-wrapper type-alias as-wrapper))))
+    (when alias
+      (.addMethod ^MultiFn types/as-wrapper alias as-wrapper))))
 
 (defn as-arity-2-wrapper
   "Converts 2-arity function `(fn [handler obj])` to function `(fn [obj])`
@@ -75,8 +75,8 @@
           (-> exchange (.dispatch handler))
           (-> handler (.handleRequest exchange)))))))
 
-(declare-type force-dispatch {:type-alias ::force-dispatch
-                              :as-wrapper (as-arity-1-wrapper force-dispatch)})
+(define-type force-dispatch {:alias ::force-dispatch
+                             :as-wrapper (as-arity-1-wrapper force-dispatch)})
 
 ;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 
@@ -130,9 +130,9 @@
        (reduce add-prefix-path handler prefix)
        (reduce add-exact-path handler exact)))))
 
-(declare-type path {:type-alias ::path
-                    :as-handler path
-                    :as-wrapper (as-arity-2-wrapper path)})
+(define-type path {:alias ::path
+                   :as-handler path
+                   :as-wrapper (as-arity-2-wrapper path)})
 
 ;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 
@@ -166,9 +166,9 @@
    (-> (virtual-host config)
        (.setDefaultHandler (types/as-handler default-handler)))))
 
-(declare-type virtual-host {:type-alias ::virtual-host
-                            :as-handler virtual-host
-                            :as-wrapper (as-arity-2-wrapper virtual-host)})
+(define-type virtual-host {:alias ::virtual-host
+                           :as-handler virtual-host
+                           :as-wrapper (as-arity-2-wrapper virtual-host)})
 
 (comment
   (types/as-handler {:type virtual-host :host {"localhost" identity}})
@@ -221,9 +221,9 @@
   ([next-handler, callback]
    (websocket/handshake next-handler callback)))
 
-(declare-type websocket {:type-alias ::websocket
-                         :as-handler websocket
-                         :as-wrapper (as-arity-2-wrapper websocket)})
+(define-type websocket {:alias ::websocket
+                        :as-handler websocket
+                        :as-wrapper (as-arity-2-wrapper websocket)})
 
 ;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 
@@ -270,9 +270,9 @@
   [{:keys [resource-manager] :as config}]
   (types/as-resource-manager (assoc config :type resource-manager)))
 
-(declare-type resource {:type-alias ::resource
-                        :as-handler resource
-                        :as-wrapper (as-arity-2-wrapper resource)})
+(define-type resource {:alias ::resource
+                       :as-handler resource
+                       :as-wrapper (as-arity-2-wrapper resource)})
 
 ;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 
@@ -335,8 +335,8 @@
                              (types/as-session-manager session-manager)
                              (types/as-session-config session-config)))
 
-(declare-type session-attachment {:type-alias ::session-attachment
-                                  :as-wrapper (as-arity-2-wrapper session-attachment)})
+(define-type session-attachment {:alias ::session-attachment
+                                 :as-wrapper (as-arity-2-wrapper session-attachment)})
 
 ;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 
@@ -350,8 +350,8 @@
   [next-handler]
   (ProxyPeerAddressHandler. next-handler))
 
-(declare-type proxy-peer-address {:type-alias ::proxy-peer-address
-                                  :as-wrapper (as-arity-1-wrapper proxy-peer-address)})
+(define-type proxy-peer-address {:alias ::proxy-peer-address
+                                 :as-wrapper (as-arity-1-wrapper proxy-peer-address)})
 
 ;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 
@@ -361,8 +361,8 @@
   [next-handler]
   (SimpleErrorPageHandler. (types/as-handler next-handler)))
 
-(declare-type simple-error-page {:type-alias ::simple-error-page
-                                 :as-wrapper (as-arity-1-wrapper simple-error-page)})
+(define-type simple-error-page {:alias ::simple-error-page
+                                :as-wrapper (as-arity-1-wrapper simple-error-page)})
 
 (comment
   (types/as-handler {:type simple-error-page})
@@ -380,8 +380,8 @@
   [next-handler]
   (GracefulShutdownHandler. (types/as-handler next-handler)))
 
-(declare-type graceful-shutdown {:type-alias ::graceful-shutdown
-                                 :as-wrapper (as-arity-1-wrapper graceful-shutdown)})
+(define-type graceful-shutdown {:alias ::graceful-shutdown
+                                :as-wrapper (as-arity-1-wrapper graceful-shutdown)})
 
 ;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 
@@ -391,7 +391,7 @@
   [next-handler]
   (RequestDumpingHandler. (types/as-handler next-handler)))
 
-(declare-type request-dump {:type-alias ::request-dump
-                            :as-wrapper (as-arity-1-wrapper request-dump)})
+(define-type request-dump {:alias ::request-dump
+                           :as-wrapper (as-arity-1-wrapper request-dump)})
 
 ;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
