@@ -98,7 +98,7 @@
 
 ;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 
-(defn- put-headers!
+(defn put-headers!
   "Inserts map `headers` into mutating `header-map!`, returns `nil`.
 
   - All keys and values in `headers` are converted to string with `str`.
