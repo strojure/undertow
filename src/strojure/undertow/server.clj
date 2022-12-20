@@ -44,12 +44,12 @@
   - `:socket-options` The map of socket options.
   - `:worker-options` The map of worker options.
 
-  - `::fn-as-handler` The function `(fn [f] handler)`
+  - `::handler-fn-adapter` The function `(fn [f] handler)`
       + Defines coercion of clojure functions to HttpHandler during invocation
         of `start`, like i.e. ring handler.
       + By default, the coercion is not defined and functions cannot be used as
         handler.
-      + The coercion can be assigned permanently using [[set-fn-as-handler]].
+      + The coercion can be assigned permanently using [[set-handler-fn-adapter]].
 
   - `::wrap-builder-fn`
       + The function `(fn [f] (fn [builder config] (f builder config)))` which
@@ -133,7 +133,7 @@
                         buffer-size, io-threads, worker-threads, direct-buffers,
                         server-options, socket-options, worker-options]
                  ::keys
-                 [fn-as-handler, wrap-builder-fn]}])}
+                 [handler-fn-adapter, wrap-builder-fn]}])}
   [config-or-server]
   (types/server-start config-or-server))
 
@@ -144,8 +144,8 @@
   (types/server-stop instance))
 
 (defmethod types/server-start :default
-  [{::keys [fn-as-handler, wrap-builder-fn] :as config}]
-  (binding [types/*fn-as-handler* (or fn-as-handler types/*fn-as-handler*)]
+  [{::keys [handler-fn-adapter, wrap-builder-fn] :as config}]
+  (binding [types/*handler-fn-adapter* (or handler-fn-adapter types/*handler-fn-adapter*)]
     (let [builder-fn (cond-> builder/configure wrap-builder-fn (wrap-builder-fn))
           server (-> (Undertow/builder)
                      (builder-fn config)
@@ -167,11 +167,11 @@
 
 ;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 
-(defn set-fn-as-handler
+(defn set-handler-fn-adapter
   "Permanently assigns coercion of Clojure function to `HttpHandler`. Can be
   used by adapters like Ring handler adapter."
   [f]
-  (alter-var-root #'types/*fn-as-handler* (constantly f)))
+  (alter-var-root #'types/*handler-fn-adapter* (constantly f)))
 
 ;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 
