@@ -26,18 +26,18 @@
 
 ;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 
-(defmulti start-server
+(defmulti server-start
   "Starts Undertow server given `obj`, returns instance which can be stopped."
   {:arglists '([obj])}
   object-type)
 
-(defmulti stop-server
+(defmulti server-stop
   "Stops Undertow server, returns nil."
   {:arglists '([obj])}
   object-type)
 
-(defmethod start-server Undertow [^Undertow server] (doto server .start))
-(defmethod stop-server Undertow [^Undertow server] (.stop server))
+(defmethod server-start Undertow [^Undertow server] (doto server .start))
+(defmethod server-stop Undertow [^Undertow server] (.stop server))
 
 ;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 

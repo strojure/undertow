@@ -135,15 +135,15 @@
                  ::keys
                  [fn-as-handler, wrap-builder-fn]}])}
   [config-or-server]
-  (types/start-server config-or-server))
+  (types/server-start config-or-server))
 
 (defn stop
   "Stops server instance, returns nil. The instance can be an instance of
   `Undertow` or map with `::undertow` key."
   [instance]
-  (types/stop-server instance))
+  (types/server-stop instance))
 
-(defmethod types/start-server :default
+(defmethod types/server-start :default
   [{::keys [fn-as-handler, wrap-builder-fn] :as config}]
   (binding [types/*fn-as-handler* (or fn-as-handler types/*fn-as-handler*)]
     (let [builder-fn (cond-> builder/configure wrap-builder-fn (wrap-builder-fn))
@@ -153,15 +153,15 @@
       (.start server)
       {::undertow server :type ::instance})))
 
-(defmethod types/start-server ::instance
+(defmethod types/server-start ::instance
   [{::keys [undertow]}]
-  (types/start-server undertow))
+  (types/server-start undertow))
 
-(defmethod types/stop-server ::instance
+(defmethod types/server-stop ::instance
   [{::keys [undertow]}]
-  (types/stop-server undertow))
+  (types/server-stop undertow))
 
-(defmethod types/start-server Undertow$Builder
+(defmethod types/server-start Undertow$Builder
   [builder]
   (start {::wrap-builder-fn (constantly builder)}))
 
