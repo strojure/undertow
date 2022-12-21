@@ -128,7 +128,7 @@
 
   There are some Undertow handlers available in the `handler` namespace. Others
   can be used via Java interop or adapted for declarative description using
-  [[handler/declare-type]] function.
+  [[handler/define-type]] function.
   "
   {:arglists '([{:keys [port, handler,
                         buffer-size, io-threads, worker-threads, direct-buffers,
