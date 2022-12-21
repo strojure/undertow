@@ -58,7 +58,7 @@
         handler.
       + The coercion can be assigned permanently using [[set-handler-fn-adapter]].
 
-  - `::wrap-builder-fn`
+  - `::builder-fn-wrapper`
       + The function `(fn [f] (fn [builder config] (f builder config)))` which
         wraps standard builder configuration function `f` returning new function
         on builder and configuration.
@@ -140,20 +140,20 @@
                         buffer-size, io-threads, worker-threads, direct-buffers,
                         server-options, socket-options, worker-options]
                  ::keys
-                 [handler-fn-adapter, wrap-builder-fn]}])}
+                 [handler-fn-adapter, builder-fn-wrapper]}])}
   [config-or-server]
   (types/server-start config-or-server))
 
 (defn stop
   "Stops server instance, returns nil. The instance can be an instance of
-  `Undertow` or map with `::undertow` key."
+  `Undertow` or map with `{:type ::instance}`."
   [instance]
   (types/server-stop instance))
 
 (defmethod types/server-start :default
-  [{::keys [handler-fn-adapter, wrap-builder-fn] :as config}]
+  [{::keys [handler-fn-adapter, builder-fn-wrapper] :as config}]
   (binding [types/*handler-fn-adapter* (or handler-fn-adapter types/*handler-fn-adapter*)]
-    (let [builder-fn (cond-> builder/configure wrap-builder-fn (wrap-builder-fn))
+    (let [builder-fn (cond-> builder/configure builder-fn-wrapper (builder-fn-wrapper))
           server (-> (Undertow/builder)
                      (builder-fn config)
                      (builder/build))]
@@ -170,7 +170,7 @@
 
 (defmethod types/server-start Undertow$Builder
   [builder]
-  (start {::wrap-builder-fn (constantly builder)}))
+  (start {::builder-fn-wrapper (constantly builder)}))
 
 ;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 
