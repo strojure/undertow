@@ -4,7 +4,12 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Version `1.0.31-beta.4`
+## Version `1.0.32-SNAPSHOT`
+
+
+
+## Version `1.0.31-beta.4` on 2022-12-21
+- 
 - Remove namespace from server configuration options.
 
 ## Version `1.0.28-beta3` on 2022-12-21
