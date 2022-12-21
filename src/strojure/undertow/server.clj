@@ -51,14 +51,14 @@
   - `:socket-options` The map of socket options.
   - `:worker-options` The map of worker options.
 
-  - `::handler-fn-adapter` The function `(fn [f] handler)`
+  - `:handler-fn-adapter` The function `(fn [f] handler)`
       + Defines coercion of clojure functions to HttpHandler during invocation
         of `start`, like i.e. ring handler.
       + By default, the coercion is not defined and functions cannot be used as
         handler.
       + The coercion can be assigned permanently using [[set-handler-fn-adapter]].
 
-  - `::builder-fn-wrapper`
+  - `:builder-fn-wrapper`
       + The function `(fn [f] (fn [builder config] (f builder config)))` which
         wraps standard builder configuration function `f` returning new function
         on builder and configuration.
@@ -138,9 +138,8 @@
   "
   {:arglists '([{:keys [port, handler,
                         buffer-size, io-threads, worker-threads, direct-buffers,
-                        server-options, socket-options, worker-options]
-                 ::keys
-                 [handler-fn-adapter, builder-fn-wrapper]}])}
+                        server-options, socket-options, worker-options
+                        handler-fn-adapter, builder-fn-wrapper]}])}
   [config-or-server]
   (types/server-start config-or-server))
 
@@ -151,7 +150,7 @@
   (types/server-stop instance))
 
 (defmethod types/server-start :default
-  [{::keys [handler-fn-adapter, builder-fn-wrapper] :as config}]
+  [{:keys [handler-fn-adapter, builder-fn-wrapper] :as config}]
   (binding [types/*handler-fn-adapter* (or handler-fn-adapter types/*handler-fn-adapter*)]
     (let [builder-fn (cond-> builder/configure builder-fn-wrapper (builder-fn-wrapper))
           server (-> (Undertow/builder)
@@ -170,7 +169,7 @@
 
 (defmethod types/server-start Undertow$Builder
   [builder]
-  (start {::builder-fn-wrapper (constantly builder)}))
+  (start {:builder-fn-wrapper (constantly builder)}))
 
 ;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 
