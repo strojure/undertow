@@ -3,6 +3,7 @@
   (:require [strojure.undertow.api.builder :as builder]
             [strojure.undertow.api.types :as types])
   (:import (io.undertow Undertow Undertow$Builder UndertowOptions)
+           (java.io Closeable)
            (org.xnio Options)))
 
 (set! *warn-on-reflection* true)
@@ -164,6 +165,20 @@
 (defmethod types/server-start Undertow$Builder
   [builder]
   (start {::wrap-builder-fn (constantly builder)}))
+
+;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+
+(defn closeable
+  "Returns `java.io.Closable` interface for running servers instance to use with
+  `with-open` macro like:
+
+      (with-open [_ (closable (start {...}))]
+        ;; Use running server here then close it.
+        )
+  "
+  ^Closeable [instance]
+  (reify Closeable
+    (close [_] (stop instance))))
 
 ;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 
