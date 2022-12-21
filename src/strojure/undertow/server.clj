@@ -85,11 +85,11 @@
           (handler/session-attachment {})
           ;; The handler for specific path
           (handler/path {:prefix {\"static\" (handler/resource {:resource-manager :class-path
-                                                                :prefix \"public/static\"})}
+                                                              :prefix \"public/static\"})}
                          :exact {\"websocket\" (handler/websocket {:on-connect (fn [{:keys [channel] :as event}])
-                                                                   :on-message (fn [{:keys [channel text] :as event}])
-                                                                   :on-close (fn [event])
-                                                                   :on-error (fn [event])})}})
+                                                                 :on-message (fn [{:keys [channel text] :as event}])
+                                                                 :on-close (fn [event])
+                                                                 :on-error (fn [event])})}})
           ;; The handler for webapi hostname.
           (handler/virtual-host {:host {\"webapi.localtest.me\" webapi-handler-fn}})
           (handler/simple-error-page)
@@ -108,13 +108,13 @@
        ;; The handler for specific path
        {:type handler/path
         :prefix {\"static\" {:type handler/resource
-                             :resource-manager :class-path
-                             :prefix \"public/static\"}}
+                           :resource-manager :class-path
+                           :prefix \"public/static\"}}
         :exact {\"websocket\" {:type handler/websocket
-                               :on-connect (fn [{:keys [channel] :as event}])
-                               :on-message (fn [{:keys [channel text] :as event}])
-                               :on-close (fn [event])
-                               :on-error (fn [event])}}}
+                             :on-connect (fn [{:keys [channel] :as event}])
+                             :on-message (fn [{:keys [channel text] :as event}])
+                             :on-close (fn [event])
+                             :on-error (fn [event])}}}
        ;; Enable sessions for next handlers.
        {:type handler/session-attachment}
        ;; The handlers for app hostnames.
