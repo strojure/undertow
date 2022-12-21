@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Version `1.0.19-SNAPSHOT`
 
 - Add `server/closable` function.
+- Import handler namespace for declarative configurations.
 
 ## Version `1.0.18-beta2` on 2022-12-20
 
