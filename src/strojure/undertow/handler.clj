@@ -15,12 +15,26 @@
 ;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 
 (defn wrap-handler
-  "Wraps `handler` chaining with sequence of handler wrappers in `with`."
-  [handler with]
+  "Wraps `handler` with sequence `chain` of handler wrappers in direct order.
+  Used for declarative description of handler chains.
+
+  The expression
+
+      (handler/wrap-handler my-handler [handler/request-dump
+                                        handler/simple-error-page])
+      ;=> #object[io.undertow.server.handlers.RequestDumpingHandler 0x7b3122a5 \"dump-request()\"]
+
+  is same as
+
+      (-> my-handler
+          simple-error-page
+          request-dump)
+  "
+  [handler chain]
   (reduce (fn [next-handler, wrapper]
             ((types/as-wrapper wrapper) (types/as-handler next-handler)))
           (types/as-handler handler)
-          (reverse with)))
+          (reverse chain)))
 
 (defmethod types/as-handler Sequential
   [xs]
