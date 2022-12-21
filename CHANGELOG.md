@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Version `1.0.19-SNAPSHOT`
+## Version `1.0.28-beta3`
 
 - Add `server/closable` function.
 - Import handler namespace for declarative configurations.
