@@ -65,6 +65,15 @@
 
 ;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 
+(defn exchange-fn
+  "A simple HttpHandler which invokes function `handler-fn` with server exchange
+  as argument."
+  [handler-fn]
+  (reify HttpHandler
+    (handleRequest [_ exchange] (handler-fn exchange))))
+
+;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+
 (defn force-dispatch
   "A HttpHandler that dispatches request if it is running in the io thread."
   [handler]
@@ -77,6 +86,11 @@
 
 (define-type force-dispatch {:alias ::force-dispatch
                              :as-wrapper (as-arity-1-wrapper force-dispatch)})
+
+;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+
+;;; Standard Undertow handlers.
+;;; There are more handlers available in the `io.undertow.Handlers` package.
 
 ;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 
