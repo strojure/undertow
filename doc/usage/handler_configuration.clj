@@ -1,54 +1,3 @@
-# undertow
-
-Clojure API to Undertow web server.
-
-[![cljdoc badge](https://cljdoc.org/badge/com.github.strojure/undertow)](https://cljdoc.org/d/com.github.strojure/undertow)
-[![Clojars Project](https://img.shields.io/clojars/v/com.github.strojure/undertow.svg)](https://clojars.org/com.github.strojure/undertow)
-
-## Motivation
-
-- Embrace Undertow API, don't hide Undertow features behind simplified DSL.
-- Decouple server configuration and concepts like [ring handlers]
-  or [pedestal interceptors].
-- Extend functionality using Clojure idioms.
-- Reuse Undertow's library of HTTP handlers.
-- Provide declarative description of server configuration.
-
-## Usage
-
-Undertow server can be started using [start][server_start] and stopped
-with [stop][server_stop]. The running server instance is `java.io.Closeable` so
-it can be used with `with-open` macro.
-
-### Server configuration
-
-The [start][server_start] function accepts clojure map with options 
-translated to corresponding calls of Undertow builder methods. The 
-configuration map structure reflects Undertow’s Java API.
-
-The minimal configuration has only `:port` and `:handler` keys (Undertow 
-will start even with empty configuration, but it is pretty useless). This 
-starts HTTP listener on 8080 port with default settings.
-
-```clojure
-(server/start {:port 8080 :handler my-handler})
-```
-
-### Handler configuration
-
-Let’s suppose there is a scenario:
-
-- Webapi handler on the "webapi.company.com" host.
-- Application specific handlers on the hosts "app1.company.com" and
-  "app2.company.com".
-- Static resource handler for app hosts but not for webapi.
-- Websocket handler for app hosts but not for webapi.
-- HTTP sessions for app hosts but not for webapi, websockets and static 
-  resources.
-
-The Undertow handler for this case can be configured in different ways:
-
-```clojure
 (ns usage.handler-configuration
   (:require [strojure.undertow.handler :as handler]
             [strojure.undertow.server :as server])
@@ -146,18 +95,3 @@ The Undertow handler for this case can be configured in different ways:
   (with-open [_ (server/start {:handler (symbol-handler-config)})])
   (with-open [_ (server/start {:handler (keyword-handler-config)})])
   )
-```
-
----
-
-[ring handlers]:
-https://github.com/ring-clojure/ring/wiki/Concepts#handlers
-
-[pedestal interceptors]:
-http://pedestal.io/reference/interceptors
-
-[server_start]:
-https://cljdoc.org/d/com.github.strojure/undertow/CURRENT/api/strojure.undertow.server#start
-
-[server_stop]:
-https://cljdoc.org/d/com.github.strojure/undertow/CURRENT/api/strojure.undertow.server#stop

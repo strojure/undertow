@@ -8,6 +8,7 @@
   :java-source-paths ["src"]
   :javac-options ["-source" "11" "-target" "11"]
 
-  :profiles {:provided {:dependencies [[org.clojure/clojure "1.11.1"]]}}
+  :profiles {:provided {:dependencies [[org.clojure/clojure "1.11.1"]]}
+             :dev,,,,, {:source-paths ["doc"]}}
 
   :deploy-repositories [["clojars" {:url "https://clojars.org/repo" :sign-releases false}]])

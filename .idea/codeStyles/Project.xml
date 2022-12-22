@@ -18,6 +18,7 @@
     </ClojureCodeStyleSettings>
     <codeStyleSettings language="Markdown">
       <option name="RIGHT_MARGIN" value="80" />
+      <option name="WRAP_ON_TYPING" value="1" />
     </codeStyleSettings>
   </code_scheme>
 </component>
