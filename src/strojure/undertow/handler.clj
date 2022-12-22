@@ -79,12 +79,12 @@
 
 ;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 
-(defn exchange-fn
-  "A simple HttpHandler which invokes function `handler-fn` with server exchange
-  as argument."
-  [handler-fn]
+(defn with-exchange
+  "A simple HttpHandler which invokes function `handle-exchange` with server
+  exchange as argument."
+  [handle-exchange]
   (reify HttpHandler
-    (handleRequest [_ exchange] (handler-fn exchange))))
+    (handleRequest [_ exchange] (handle-exchange exchange))))
 
 ;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 

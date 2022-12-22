@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - Return closeable instance in `server/start`.
 - Remove `server/closeable` function.
+- Rename `handler/exchange-fn` to `with-exchange`.
 
 ## Version `1.0.31-beta.4` on 2022-12-21
 - 
