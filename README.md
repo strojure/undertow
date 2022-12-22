@@ -7,12 +7,14 @@ Clojure API to Undertow web server.
 
 ## Motivation
 
-- Embrace Undertow API, don't hide Undertow features behind simplified DSL.
+- Embrace Undertow API, don't hide Undertow features behind layers of 
+  simplifying abstractions.
 - Decouple server configuration and concepts like [ring handlers]
   or [pedestal interceptors].
 - Extend functionality using Clojure idioms.
 - Reuse Undertow's library of HTTP handlers.
 - Provide declarative description of server configuration.
+- Minimize the impact of implementation on performance.
 
 ## Companion projects
 
