@@ -137,13 +137,15 @@
   can be used via Java interop or adapted for declarative description using
   [[handler/define-type]] function.
   "
-  {:arglists '([{:keys [port, handler,
-                        buffer-size, io-threads, worker-threads, direct-buffers,
-                        server-options, socket-options, worker-options
-                        handler-fn-adapter, builder-fn-wrapper]}])
+  {:arglists '([{:as config :keys [port, handler, buffer-size,
+                                   io-threads, worker-threads, direct-buffers,
+                                   server-options, socket-options, worker-options
+                                   handler-fn-adapter, builder-fn-wrapper]}]
+               [^Undertow$Builder builder]
+               [^Undertow server])
    :tag ServerInstance}
-  [config-or-server]
-  (types/server-start config-or-server))
+  [obj]
+  (types/server-start obj))
 
 (defn stop
   "Stops server instance, returns nil."
