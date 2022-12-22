@@ -91,8 +91,8 @@
 (defn dispatch
   "A HttpHandler that dispatches request to the XNIO worker thread pool if the
   current thread in the IO thread for the exchange."
-  [handler]
-  (let [handler (types/as-handler handler)]
+  [next-handler]
+  (let [handler (types/as-handler next-handler)]
     (reify HttpHandler
       (handleRequest [_ exchange]
         (if (.isInIoThread exchange)
