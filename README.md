@@ -8,8 +8,14 @@ Clojure API to Undertow web server.
 ## Motivation
 
 - Embrace Undertow API, don't hide Undertow features behind simplified DSL.
-- Decouple server configuration and handler concepts like ring handler or
-  pedestal interceptors.
-- Easily extend implementation with handler concepts like ring and interceptors.
+- Decouple server configuration and concepts like [ring handlers]
+  or [pedestal interceptors].
+- Extend functionality using Clojure idioms.
 - Reuse Undertow's library of HTTP handlers.
-- Have option to describe server configuration declarative.
+- Provide declarative description of server configuration.
+
+---
+
+[ring handlers]: https://github.com/ring-clojure/ring/wiki/Concepts#handlers
+
+[pedestal interceptors]: http://pedestal.io/reference/interceptors
