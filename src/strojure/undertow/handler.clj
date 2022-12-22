@@ -255,6 +255,11 @@
 
 ;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 
+;; Translate :resource-manager to :type
+(defmethod types/as-resource-manager :default
+  [{:keys [resource-manager] :as config}]
+  (types/as-resource-manager (assoc config :type resource-manager)))
+
 (defmethod types/as-resource-manager :class-path
   [{:keys [prefix]}]
   (let [prefix (or prefix "public")]
@@ -293,10 +298,6 @@
   (^ResourceHandler
    [next-handler, resource-manager]
    (ResourceHandler. (types/as-resource-manager resource-manager) (types/as-handler next-handler))))
-
-(defmethod types/as-resource-manager resource
-  [{:keys [resource-manager] :as config}]
-  (types/as-resource-manager (assoc config :type resource-manager)))
 
 (define-type resource {:alias ::resource
                        :as-handler resource
