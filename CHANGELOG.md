@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## `1.0.48-SNAPSHOT`
+
+Release date `Unreleased`
+
+- 
+
 ## `1.0.47-beta.6`
 
 Release date `2022-12-22`
