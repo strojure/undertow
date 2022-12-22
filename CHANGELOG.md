@@ -6,7 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Version `1.0.32-SNAPSHOT`
 
-
+- Return closeable instance in `server/start`.
+- Remove `server/closeable` function.
 
 ## Version `1.0.31-beta.4` on 2022-12-21
 - 

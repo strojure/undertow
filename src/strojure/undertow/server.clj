@@ -3,8 +3,8 @@
   (:require [strojure.undertow.api.builder :as builder]
             [strojure.undertow.api.types :as types])
   (:import (io.undertow Undertow Undertow$Builder UndertowOptions)
-           (java.io Closeable)
-           (org.xnio Options)))
+           (org.xnio Options)
+           (strojure.undertow.api.types ServerInstance)))
 
 (set! *warn-on-reflection* true)
 
@@ -17,7 +17,8 @@
 ;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 
 (defn start
-  "Starts Undertow server given instance, builder or configuration map.
+  "Starts Undertow server given instance, builder or configuration map. Returns
+  closeable server instance.
 
   Server configuration map options:
 
@@ -139,51 +140,30 @@
   {:arglists '([{:keys [port, handler,
                         buffer-size, io-threads, worker-threads, direct-buffers,
                         server-options, socket-options, worker-options
-                        handler-fn-adapter, builder-fn-wrapper]}])}
+                        handler-fn-adapter, builder-fn-wrapper]}])
+   :tag ServerInstance}
   [config-or-server]
   (types/server-start config-or-server))
 
 (defn stop
-  "Stops server instance, returns nil. The instance can be an instance of
-  `Undertow` or map with `{:type ::instance}`."
+  "Stops server instance, returns nil."
   [instance]
   (types/server-stop instance))
 
 (defmethod types/server-start :default
   [{:keys [handler-fn-adapter, builder-fn-wrapper] :as config}]
-  (binding [types/*handler-fn-adapter* (or handler-fn-adapter types/*handler-fn-adapter*)]
-    (let [builder-fn (cond-> builder/configure builder-fn-wrapper (builder-fn-wrapper))
-          server (-> (Undertow/builder)
-                     (builder-fn config)
-                     (builder/build))]
-      (.start server)
-      {::undertow server :type ::instance})))
-
-(defmethod types/server-start ::instance
-  [{::keys [undertow]}]
-  (types/server-start undertow))
-
-(defmethod types/server-stop ::instance
-  [{::keys [undertow]}]
-  (types/server-stop undertow))
+  (binding [types/*handler-fn-adapter* (or handler-fn-adapter
+                                           types/*handler-fn-adapter*)]
+    (let [builder-fn (cond-> builder/configure
+                       builder-fn-wrapper (builder-fn-wrapper))]
+      (-> (Undertow/builder)
+          (builder-fn config)
+          (builder/build)
+          (types/server-start)))))
 
 (defmethod types/server-start Undertow$Builder
   [builder]
   (start {:builder-fn-wrapper (constantly builder)}))
-
-;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-
-(defn closeable
-  "Returns `java.io.Closable` interface for running servers instance to use with
-  `with-open` macro like:
-
-      (with-open [_ (closable (start {...}))]
-        ;; Use running server here then close it.
-        )
-  "
-  ^Closeable [instance]
-  (reify Closeable
-    (close [_] (stop instance))))
 
 ;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 

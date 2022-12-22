@@ -7,6 +7,7 @@
            (io.undertow.server.session SessionConfig SessionManager)
            (io.undertow.websockets WebSocketConnectionCallback)
            (io.undertow.websockets.core WebSocketCallback)
+           (java.io Closeable)
            (org.xnio ChannelListener Option OptionMap)
            (strojure.undertow.websocket WebSocketChannelListener)))
 
@@ -26,9 +27,14 @@
 
 ;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 
+(defrecord ServerInstance [undertow]
+  Closeable
+  (close [_] (.stop ^Undertow undertow)))
+
 (defmulti server-start
-  "Starts Undertow server given `obj`, returns instance which can be stopped."
-  {:arglists '([obj])}
+  "Starts Undertow server given `obj`, returns closeable ServerInstance."
+  {:arglists '([obj])
+   :tag ServerInstance}
   object-type)
 
 (defmulti server-stop
@@ -36,8 +42,11 @@
   {:arglists '([obj])}
   object-type)
 
-(defmethod server-start Undertow [^Undertow server] (doto server .start))
+(defmethod server-start Undertow [^Undertow server] (ServerInstance. (doto server .start)))
 (defmethod server-stop Undertow [^Undertow server] (.stop server))
+
+(defmethod server-start ServerInstance [instance] (server-start (:undertow instance)))
+(defmethod server-stop ServerInstance [instance] (server-stop (:undertow instance)))
 
 ;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 
