@@ -57,7 +57,8 @@
 
 (.addMethod ^MultiFn as-handler HttpHandler identity)
 
-(def ^:dynamic *handler-fn-adapter*
+(def ^{:dynamic true :arglists '([handler-fn])}
+  *handler-fn-adapter*
   "The function `(fn [f] handler)` to coerce Clojure functions to `HttpHandler`
   instances.
 
