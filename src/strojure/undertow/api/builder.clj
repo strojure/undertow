@@ -35,7 +35,7 @@
       - `:ssl-context`    The instance of `javax.net.ssl.SSLContext`.
 
   - `:handler` The listener HttpHandler to be used on the port.
-               See [[server/start]] for details.
+               See [[strojure.undertow.server/start]] for details.
 
   - `:socket-options` The map of socket options for the listener.
       - `:undertow/enable-http2`. If HTTP2 protocol enabled, boolean.

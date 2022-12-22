@@ -34,6 +34,36 @@ starts HTTP listener on 8080 port with default settings.
 (server/start {:port 8080 :handler my-handler})
 ```
 
+### Listener configuration
+
+Listener configuration is defined in a map of ports and listener options 
+under the `:port` key.
+
+Simple HTTP listener:
+
+```clojure
+;; All three are the same:
+{:port 8080}
+{:port {8080 {}}}
+{:port {8080 {:host "localhost"}}}
+```
+
+Every port can use its own handler instead of server’s one.
+
+```clojure
+{:port {8081 {:handler my-handler-1}
+        8082 {:handler my-handler-2}}}
+```
+
+HTTPS listener:
+
+```clojure
+{:port {4242 {:https {:key-managers [] :trust-managers []}}}}
+{:port {4242 {:https {:ssl-context my-ssl-context}}}}
+```
+
+NOTE: The AJP listener type is not available in declarative form.
+
 ### Handler configuration
 
 Let’s suppose there is a scenario:
