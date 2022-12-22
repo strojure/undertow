@@ -14,6 +14,10 @@ Clojure API to Undertow web server.
 - Reuse Undertow's library of HTTP handlers.
 - Provide declarative description of server configuration.
 
+## Companion projects
+
+- Ring adapter https://github.com/strojure/ring-undertow.
+
 ## Usage
 
 Undertow server can be started using [start][server_start] and stopped
