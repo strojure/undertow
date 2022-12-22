@@ -43,7 +43,7 @@
   - `callback` The instance of the `WebSocketConnectionCallback` or callback
                configuration map.
 
-    Callback configuration options:
+    Callback configuration options provided “as is” or as `:callback` key:
 
       - `:on-connect` The function `(fn [{:keys [callback exchange channel]}])`.
           + Is called once the WebSocket connection is established, which means
@@ -63,16 +63,18 @@
           + Is called on WebSocket connection error.
           + Default implementation just closes WebSocket connection.
   "
-  {:arglists '([{:as callback :keys [on-connect, on-message, on-close, on-error]}]
-               [next-handler, {:as callback :keys [on-connect, on-message, on-close, on-error]}]
+  {:arglists '([{:keys [on-connect, on-message, on-close, on-error] :as callback}]
+               [{{:keys [on-connect, on-message, on-close, on-error]} :callback}]
                [callback]
                [next-handler, callback])}
   (^WebSocketProtocolHandshakeHandler
    [callback]
-   (WebSocketProtocolHandshakeHandler. (types/as-websocket-connection-callback callback)))
+   (WebSocketProtocolHandshakeHandler. (types/as-websocket-connection-callback
+                                         (:callback callback callback))))
   (^WebSocketProtocolHandshakeHandler
    [next-handler, callback]
-   (WebSocketProtocolHandshakeHandler. (types/as-websocket-connection-callback callback)
+   (WebSocketProtocolHandshakeHandler. (types/as-websocket-connection-callback
+                                         (:callback callback callback))
                                        (types/as-handler next-handler))))
 
 ;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
