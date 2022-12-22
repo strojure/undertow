@@ -81,53 +81,48 @@
 
   **Handler declaration**
 
-  Handlers can be declared and chained using function invocations:
+  Handlers can be created and chained explicitly:
 
-      ;; The chain of HTTP handler in reverse order.
-      (-> default-handler-fn
+      (-> (my-handler :default-handler)
           ;; The handlers for app hostnames.
-          (handler/virtual-host {:host {\"app1\" app1-handler-fn
-                                        \"app2\" app2-handler-fn}})
-          ;; Enable sessions for handlers above.
+          (handler/virtual-host
+            {:host {\"app1.company.com\" (my-handler :app1-handler)
+                    \"app2.company.com\" (my-handler :app2-handler)}})
+          ;; Enable sessions for next handlers (above).
           (handler/session-attachment {})
-          ;; The handler for specific path
+          ;; Path specific handlers.
           (handler/path {:prefix {\"static\" (handler/resource {:resource-manager :class-path
                                                               :prefix \"public/static\"})}
-                         :exact {\"websocket\" (handler/websocket {:on-connect (fn [{:keys [channel] :as event}])
-                                                                 :on-message (fn [{:keys [channel text] :as event}])
-                                                                 :on-close (fn [event])
-                                                                 :on-error (fn [event])})}})
+                         :exact {\"websocket\" (handler/websocket websocket-callback)}})
           ;; The handler for webapi hostname.
-          (handler/virtual-host {:host {\"webapi.localtest.me\" webapi-handler-fn}})
+          (handler/virtual-host {:host {\"webapi.company.com\" (my-handler :webapi-handler)}})
+          ;; Supplemental useful handlers.
           (handler/simple-error-page)
           (handler/proxy-peer-address)
           (handler/graceful-shutdown))
-
-  Or same handler written declarative:
-
-      [;; The chain of HTTP handlers in direct order.
+      
+  Or same handler can be written declarative:
+  
+      [;; Supplemental useful handlers.
        {:type handler/graceful-shutdown}
        {:type handler/proxy-peer-address}
        {:type handler/simple-error-page}
        ;; The handler for webapi hostname.
        {:type handler/virtual-host
-        :host {\"webapi.localtest.me\" webapi-handler-fn}}
-       ;; The handler for specific path
+        :host {\"app1.company.com\" (my-handler :app1-handler)
+               \"app2.company.com\" (my-handler :app2-handler)}}
+       ;; Path specific handlers.
        {:type handler/path
-        :prefix {\"static\" {:type handler/resource
-                           :resource-manager :class-path
+        :prefix {\"static\" {:type handler/resource :resource-manager :class-path
                            :prefix \"public/static\"}}
-        :exact {\"websocket\" {:type handler/websocket
-                             :on-connect (fn [{:keys [channel] :as event}])
-                             :on-message (fn [{:keys [channel text] :as event}])
-                             :on-close (fn [event])
-                             :on-error (fn [event])}}}
+        :exact {\"websocket\" {:type handler/websocket :callback websocket-callback}}}
        ;; Enable sessions for next handlers.
        {:type handler/session-attachment}
        ;; The handlers for app hostnames.
-       {:type handler/virtual-host :host {\"app1\" app1-handler-fn
-                                          \"app2\" app2-handler-fn}}
-       default-handler-fn]
+       {:type handler/virtual-host
+        :host {\"webapi.company.com\" (my-handler :webapi-handler)}}
+       ;; Last resort handler
+       (my-handler :default-handler)]
 
   Keywords can be used instead of symbols as handler `:type` values:
 
