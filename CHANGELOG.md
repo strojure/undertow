@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Version `1.0.44-SNAPSHOT`
 
-
+- Rename `handler/force-dispatch` to `dispatch`.
 
 ## Version `1.0.43-beta.5`
 

@@ -88,8 +88,9 @@
 
 ;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 
-(defn force-dispatch
-  "A HttpHandler that dispatches request if it is running in the io thread."
+(defn dispatch
+  "A HttpHandler that dispatches request to the XNIO worker thread pool if the
+  current thread in the IO thread for the exchange."
   [handler]
   (let [handler (types/as-handler handler)]
     (reify HttpHandler
@@ -98,8 +99,8 @@
           (-> exchange (.dispatch handler))
           (-> handler (.handleRequest exchange)))))))
 
-(define-type force-dispatch {:alias ::force-dispatch
-                             :as-wrapper (as-arity-1-wrapper force-dispatch)})
+(define-type dispatch {:alias ::dispatch
+                       :as-wrapper (as-arity-1-wrapper dispatch)})
 
 ;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 
