@@ -1,13 +1,14 @@
 (ns strojure.undertow.handler
   "Undertow `HttpHandler` functionality and library of standard handlers."
   (:require [strojure.undertow.api.types :as types]
+            [strojure.undertow.handler.session :as session]
             [strojure.undertow.websocket.handler :as websocket])
   (:import (clojure.lang MultiFn Sequential)
            (io.undertow.server HttpHandler)
            (io.undertow.server.handlers GracefulShutdownHandler NameVirtualHostHandler PathHandler ProxyPeerAddressHandler RequestDumpingHandler)
            (io.undertow.server.handlers.error SimpleErrorPageHandler)
            (io.undertow.server.handlers.resource ClassPathResourceManager ResourceHandler)
-           (io.undertow.server.session InMemorySessionManager SecureRandomSessionIdGenerator SessionAttachmentHandler SessionCookieConfig)
+           (io.undertow.server.session SessionAttachmentHandler)
            (io.undertow.websockets WebSocketProtocolHandshakeHandler)))
 
 (set! *warn-on-reflection* true)
@@ -306,39 +307,8 @@
 
 ;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 
-(defn in-memory-session-manager
-  "Return instance of `InMemorySessionManager` given configuration map."
-  [{:keys [session-id-generator
-           deployment-name
-           max-sessions
-           expire-oldest-unused-session-on-max
-           statistics-enabled]
-    :or {max-sessions 0, expire-oldest-unused-session-on-max true}}]
-  (InMemorySessionManager. (or session-id-generator (SecureRandomSessionIdGenerator.)),
-                           deployment-name
-                           max-sessions
-                           expire-oldest-unused-session-on-max
-                           (boolean statistics-enabled)))
-
-(.addMethod ^MultiFn types/as-session-manager :default
-            in-memory-session-manager)
-
-(defn session-cookie-config
-  "Returns instance of `SessionCookieConfig` given configuration map."
-  #_{:clj-kondo/ignore [:shadowed-var]}
-  [{:keys [cookie-name, path, domain, discard, secure, http-only, max-age, comment]}]
-  (cond-> (SessionCookieConfig.)
-    cookie-name (.setCookieName cookie-name)
-    path (.setPath path)
-    domain (.setDomain domain)
-    (some? discard) (.setDiscard (boolean discard))
-    (some? secure) (.setSecure (boolean secure))
-    (some? http-only) (.setHttpOnly (boolean http-only))
-    max-age (.setMaxAge max-age)
-    comment (.setComment comment)))
-
-(.addMethod ^MultiFn types/as-session-config :default
-            session-cookie-config)
+(.addMethod ^MultiFn types/as-session-manager :default session/in-memory-session-manager)
+(.addMethod ^MultiFn types/as-session-config :default session/session-cookie-config)
 
 (defn session
   "Returns a new handler that attaches the session to the request. This handler
