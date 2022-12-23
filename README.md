@@ -114,7 +114,7 @@ The Undertow handler for this case can be configured in different ways:
         {:host {"app1.company.com" (my-handler :app1-handler)
                 "app2.company.com" (my-handler :app2-handler)}})
       ;; Enable sessions for next handlers (above).
-      (handler/session-attachment {})
+      (handler/session {})
       ;; Path specific handlers.
       (handler/path {:prefix {"static" (handler/resource {:resource-manager :class-path
                                                           :prefix "public/static"})}
@@ -144,7 +144,7 @@ The Undertow handler for this case can be configured in different ways:
                        :prefix "public/static"}}
     :exact {"websocket" {:type handler/websocket :callback websocket-callback}}}
    ;; Enable sessions for next handlers.
-   {:type handler/session-attachment}
+   {:type handler/session}
    ;; The handlers for app hostnames.
    {:type handler/virtual-host
     :host {"webapi.company.com" (my-handler :webapi-handler)}}
@@ -170,7 +170,7 @@ The Undertow handler for this case can be configured in different ways:
     :exact {"websocket" {:type ::handler/websocket
                          :callback websocket-callback}}}
    ;; Enable sessions for next handlers.
-   {:type ::handler/session-attachment}
+   {:type ::handler/session}
    ;; The handlers for app hostnames.
    {:type ::handler/virtual-host
     :host {"webapi.company.com" (my-handler :webapi-handler)}}

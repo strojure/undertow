@@ -340,7 +340,7 @@
 (.addMethod ^MultiFn types/as-session-config :default
             session-cookie-config)
 
-(defn session-attachment
+(defn session
   "Returns a new handler that attaches the session to the request. This handler
   is also the place where session cookie configuration properties are
   configured. Note: this approach is not used by Servlet, which has its own
@@ -365,8 +365,8 @@
                              (types/as-session-manager session-manager)
                              (types/as-session-config session-config)))
 
-(define-type session-attachment {:alias ::session-attachment
-                                 :as-wrapper (as-arity-2-wrapper session-attachment)})
+(define-type session {:alias ::session
+                      :as-wrapper (as-arity-2-wrapper session)})
 
 ;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 
