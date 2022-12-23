@@ -9,6 +9,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 Release date `Unreleased`
 
 - Rename `handler/session-attachment` to `session`
+- Rename wrapper utility functions
+    - `handler/as-arity-1-wrapper` to `arity1-wrapper`
+    - `handler/as-arity-2-wrapper` to `arity2-wrapper`
 
 ## `1.0.47-beta.6`
 

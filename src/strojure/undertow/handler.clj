@@ -65,13 +65,13 @@
     (when alias
       (.addMethod ^MultiFn types/as-wrapper alias as-wrapper))))
 
-(defn as-arity-2-wrapper
+(defn arity2-wrapper
   "Converts 2-arity function `(fn [handler obj])` to function `(fn [obj])`
   returning handler wrapper `(fn [handler] ...)`."
   [f]
   (fn [opts] (fn [handler] (f handler opts))))
 
-(defn as-arity-1-wrapper
+(defn arity1-wrapper
   "Converts 1-arity function `(fn [handler])` to function `(fn [obj])`
   returning handler wrapper `(fn [handler] ...)`."
   [f]
@@ -100,7 +100,7 @@
           (-> handler (.handleRequest exchange)))))))
 
 (define-type dispatch {:alias ::dispatch
-                       :as-wrapper (as-arity-1-wrapper dispatch)})
+                       :as-wrapper (arity1-wrapper dispatch)})
 
 ;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 
@@ -161,7 +161,7 @@
 
 (define-type path {:alias ::path
                    :as-handler path
-                   :as-wrapper (as-arity-2-wrapper path)})
+                   :as-wrapper (arity2-wrapper path)})
 
 ;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 
@@ -197,7 +197,7 @@
 
 (define-type virtual-host {:alias ::virtual-host
                            :as-handler virtual-host
-                           :as-wrapper (as-arity-2-wrapper virtual-host)})
+                           :as-wrapper (arity2-wrapper virtual-host)})
 
 (comment
   (types/as-handler {:type virtual-host :host {"localhost" identity}})
@@ -252,7 +252,7 @@
 
 (define-type websocket {:alias ::websocket
                         :as-handler websocket
-                        :as-wrapper (as-arity-2-wrapper websocket)})
+                        :as-wrapper (arity2-wrapper websocket)})
 
 ;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 
@@ -302,7 +302,7 @@
 
 (define-type resource {:alias ::resource
                        :as-handler resource
-                       :as-wrapper (as-arity-2-wrapper resource)})
+                       :as-wrapper (arity2-wrapper resource)})
 
 ;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 
@@ -366,7 +366,7 @@
                              (types/as-session-config session-config)))
 
 (define-type session {:alias ::session
-                      :as-wrapper (as-arity-2-wrapper session)})
+                      :as-wrapper (arity2-wrapper session)})
 
 ;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 
@@ -381,7 +381,7 @@
   (ProxyPeerAddressHandler. next-handler))
 
 (define-type proxy-peer-address {:alias ::proxy-peer-address
-                                 :as-wrapper (as-arity-1-wrapper proxy-peer-address)})
+                                 :as-wrapper (arity1-wrapper proxy-peer-address)})
 
 ;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 
@@ -392,7 +392,7 @@
   (SimpleErrorPageHandler. (types/as-handler next-handler)))
 
 (define-type simple-error-page {:alias ::simple-error-page
-                                :as-wrapper (as-arity-1-wrapper simple-error-page)})
+                                :as-wrapper (arity1-wrapper simple-error-page)})
 
 (comment
   (types/as-handler {:type simple-error-page})
@@ -411,7 +411,7 @@
   (GracefulShutdownHandler. (types/as-handler next-handler)))
 
 (define-type graceful-shutdown {:alias ::graceful-shutdown
-                                :as-wrapper (as-arity-1-wrapper graceful-shutdown)})
+                                :as-wrapper (arity1-wrapper graceful-shutdown)})
 
 ;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 
@@ -422,6 +422,6 @@
   (RequestDumpingHandler. (types/as-handler next-handler)))
 
 (define-type request-dump {:alias ::request-dump
-                           :as-wrapper (as-arity-1-wrapper request-dump)})
+                           :as-wrapper (arity1-wrapper request-dump)})
 
 ;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
