@@ -15,33 +15,6 @@
 
 ;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 
-(defn wrap-handler
-  "Wraps `handler` with sequence `chain` of handler wrappers in direct order.
-  Used for declarative description of handler chains.
-
-  The expression
-
-      (handler/wrap-handler my-handler [handler/request-dump
-                                        handler/simple-error-page])
-      ;=> #object[io.undertow.server.handlers.RequestDumpingHandler 0x7b3122a5 \"dump-request()\"]
-
-  is same as
-
-      (-> my-handler
-          simple-error-page
-          request-dump)
-  "
-  [handler chain]
-  (reduce (fn [next-handler, wrapper]
-            ((types/as-wrapper wrapper) (types/as-handler next-handler)))
-          (types/as-handler handler)
-          (reverse chain)))
-
-(defmethod types/as-handler Sequential
-  [xs]
-  (when-let [xs (seq xs)]
-    (wrap-handler (last xs) (butlast xs))))
-
 (defn define-type
   "Adds multimethods for declarative description of HTTP handlers.
 
@@ -77,6 +50,35 @@
   returning handler wrapper `(fn [handler] ...)`."
   [f]
   (fn [_] f))
+
+;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+
+(defn chain
+  "Chains sequence of handler wrappers with `handler`in direct order. Used for
+  declarative description of handler chains. The 1-arity function chains
+  preceding wrappers with the last handler in sequence.
+
+  The expression
+
+      (handler/chain my-handler [handler/request-dump
+                                 handler/simple-error-page])
+      ;=> #object[io.undertow.server.handlers.RequestDumpingHandler 0x7b3122a5 \"dump-request()\"]
+
+  is same as
+
+      (-> my-handler
+          simple-error-page
+          request-dump)
+  "
+  ([xs]
+   (chain (last xs) (butlast xs)))
+  ([handler xs]
+   (reduce (fn [next-handler, wrapper]
+             ((types/as-wrapper wrapper) (types/as-handler next-handler)))
+           (types/as-handler handler)
+           (reverse xs))))
+
+(.addMethod ^MultiFn types/as-handler Sequential chain)
 
 ;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 

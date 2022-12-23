@@ -12,6 +12,7 @@ Release date `Unreleased`
 - Rename wrapper utility functions
     - `handler/as-arity-1-wrapper` to `arity1-wrapper`
     - `handler/as-arity-2-wrapper` to `arity2-wrapper`
+- Replace `handler/wrap-handler` with `chain` function
 
 ## `1.0.47-beta.6`
 
