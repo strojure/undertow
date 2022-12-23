@@ -2,14 +2,15 @@
   "Undertow `HttpHandler` functionality and library of standard handlers."
   (:require [strojure.undertow.api.types :as types]
             [strojure.undertow.handler.session :as session]
-            [strojure.undertow.websocket.handler :as websocket])
+            [strojure.undertow.handler.websocket :as websocket])
   (:import (clojure.lang MultiFn Sequential)
            (io.undertow.server HttpHandler)
            (io.undertow.server.handlers GracefulShutdownHandler NameVirtualHostHandler PathHandler ProxyPeerAddressHandler RequestDumpingHandler)
            (io.undertow.server.handlers.error SimpleErrorPageHandler)
            (io.undertow.server.handlers.resource ClassPathResourceManager ResourceHandler)
            (io.undertow.server.session SessionAttachmentHandler)
-           (io.undertow.websockets WebSocketProtocolHandshakeHandler)))
+           (io.undertow.websockets WebSocketConnectionCallback WebSocketProtocolHandshakeHandler)
+           (org.xnio ChannelListener)))
 
 (set! *warn-on-reflection* true)
 
@@ -209,6 +210,12 @@
 
 ;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 
+(.addMethod ^MultiFn types/as-websocket-connection-callback ChannelListener
+            websocket/listener-as-connection-callback)
+
+(prefer-method types/as-websocket-connection-callback
+               ChannelListener WebSocketConnectionCallback)
+
 (defn websocket
   "Returns a new web socket session handler with optional next handler to invoke
   if the web socket connection fails. A `HttpHandler` which will process the
@@ -246,12 +253,15 @@
                [{{:keys [on-connect, on-message, on-close, on-error]} :callback}]
                [callback]
                [next-handler, callback])}
-  ^WebSocketProtocolHandshakeHandler
-  ([callback]
-   (websocket/handshake callback))
-  ^WebSocketProtocolHandshakeHandler
-  ([next-handler, callback]
-   (websocket/handshake next-handler callback)))
+  (^WebSocketProtocolHandshakeHandler
+   [callback]
+   (WebSocketProtocolHandshakeHandler. (types/as-websocket-connection-callback
+                                         (:callback callback callback))))
+  (^WebSocketProtocolHandshakeHandler
+   [next-handler, callback]
+   (WebSocketProtocolHandshakeHandler. (types/as-websocket-connection-callback
+                                         (:callback callback callback))
+                                       (types/as-handler next-handler))))
 
 (define-type websocket {:alias ::websocket
                         :as-handler websocket
