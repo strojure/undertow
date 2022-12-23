@@ -47,10 +47,9 @@
   + The `:https` enables HTTPS protocol for the listener.
   + Declaration of AJP protocol is not supported.
   "
-  (^Undertow$Builder
-   [builder [port config]] (add-listener builder port config))
-  (^Undertow$Builder
-   [builder port config]
+  {:tag Undertow$Builder}
+  ([builder [port config]] (add-listener builder port config))
+  ([builder port config]
    (.addListener ^Undertow$Builder builder (-> (types/as-listener-builder config)
                                                (.setPort (int port))))))
 
@@ -58,35 +57,32 @@
 
 (defn set-server-option
   "Sets server option."
-  (^Undertow$Builder
-   [builder [option value]] (set-server-option builder option value))
-  (^Undertow$Builder
-   [builder option value]
+  {:tag Undertow$Builder}
+  ([builder [option value]] (set-server-option builder option value))
+  ([builder option value]
    (let [[option value] (types/as-option option value)]
      (.setServerOption ^Undertow$Builder builder option value))))
 
 (defn set-socket-option
   "Sets socket option."
-  (^Undertow$Builder
-   [builder [option value]] (set-socket-option builder option value))
-  (^Undertow$Builder
-   [builder option value]
+  {:tag Undertow$Builder}
+  ([builder [option value]] (set-socket-option builder option value))
+  ([builder option value]
    (let [[option value] (types/as-option option value)]
      (.setSocketOption ^Undertow$Builder builder option value))))
 
 (defn set-worker-option
   "Sets worker options."
-  (^Undertow$Builder
-   [builder [option value]] (set-worker-option builder option value))
-  (^Undertow$Builder
-   [builder option value]
+  {:tag Undertow$Builder}
+  ([builder [option value]] (set-worker-option builder option value))
+  ([builder option value]
    (let [[option value] (types/as-option option value)]
      (.setWorkerOption ^Undertow$Builder builder option value))))
 
 ;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 
 (defn- apply-map
-  ^Undertow$Builder
+  {:tag Undertow$Builder}
   [builder set-fn entries]
   (reduce set-fn builder entries))
 
@@ -108,7 +104,7 @@
 
 (defn build
   "Builds and returns Undertow instance."
-  ^Undertow
+  {:tag Undertow}
   [builder]
   (.build ^Undertow$Builder builder))
 

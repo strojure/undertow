@@ -28,9 +28,9 @@
 
 (defn get-session-manager
   "Returns session manager from `exchange`."
-  {:inline (fn [e] `^SessionManager (.getAttachment ~(with-meta e {:tag 'io.undertow.server.HttpServerExchange})
+  {:tag SessionManager
+   :inline (fn [e] `^SessionManager (.getAttachment ~(with-meta e {:tag 'io.undertow.server.HttpServerExchange})
                                                     SessionManager/ATTACHMENT_KEY))}
-  ^SessionManager
   [exchange]
   (-> ^HttpServerExchange exchange
       (.getAttachment SessionManager/ATTACHMENT_KEY)))
@@ -43,14 +43,14 @@
 
 (defn get-session-config
   "Returns session config from the `exchange`."
-  ^SessionConfig
+  {:tag SessionConfig}
   [exchange]
   (-> ^HttpServerExchange exchange
       (.getAttachment SessionConfig/ATTACHMENT_KEY)))
 
 (defn get-existing-session
   "Returns session from the `exchange` or nil if is not created."
-  ^Session
+  {:tag Session}
   [exchange]
   (some-> (get-session-manager exchange)
           (.getSession exchange (get-session-config exchange))))
@@ -58,7 +58,7 @@
 (defn get-or-create-session
   "Return session from the `exchange`, creates new session if necessary. Returns
   `nil` if session manager is not attached to the `exchange`."
-  ^Session
+  {:tag Session}
   [exchange]
   (when-let [mgr (get-session-manager exchange)]
     (let [cfg (get-session-config exchange)]
@@ -91,7 +91,7 @@
 
 (defn new-output-stream
   "Returns new output stream. Starts blocking if necessary."
-  ^OutputStream
+  {:tag OutputStream}
   [^HttpServerExchange e]
   (start-blocking* e)
   (.getOutputStream e))

@@ -144,10 +144,9 @@
       (handler/path {:prefix {\"static\" (handler/resource {...})}
                      :exact {\"ws\" (handler/websocket {...})}})
   "
-  (^PathHandler
-   [config] (path nil config))
-  (^PathHandler
-   [default-handler {:keys [prefix exact cache-size]}]
+  {:tag PathHandler}
+  ([config] (path nil config))
+  ([default-handler {:keys [prefix exact cache-size]}]
    #_{:clj-kondo/ignore [:shadowed-var]}
    (letfn [(add-prefix-path [this [path handler]]
              (.addPrefixPath ^PathHandler this path (types/as-handler handler)))
@@ -188,14 +187,13 @@
       (handler/virtual-host {:host {\"static.localhost\" (handler/resource {...})
                                     \"ws.localhost\" (handler/websocket {...})})
   "
-  (^NameVirtualHostHandler
-   [{:keys [host]}]
+  {:tag NameVirtualHostHandler}
+  ([{:keys [host]}]
    (reduce (fn [this [host handler]]
              (.addHost ^NameVirtualHostHandler this host (types/as-handler handler)))
            (NameVirtualHostHandler.)
            host))
-  (^NameVirtualHostHandler
-   [default-handler, config]
+  ([default-handler, config]
    (-> (virtual-host config)
        (.setDefaultHandler (types/as-handler default-handler)))))
 
@@ -249,16 +247,15 @@
           + Is called on WebSocket connection error.
           + Default implementation just closes WebSocket connection.
   "
-  {:arglists '([{:keys [on-connect, on-message, on-close, on-error] :as callback}]
+  {:tag WebSocketProtocolHandshakeHandler
+   :arglists '([{:keys [on-connect, on-message, on-close, on-error] :as callback}]
                [{{:keys [on-connect, on-message, on-close, on-error]} :callback}]
                [callback]
                [next-handler, callback])}
-  (^WebSocketProtocolHandshakeHandler
-   [callback]
+  ([callback]
    (WebSocketProtocolHandshakeHandler. (types/as-websocket-connection-callback
                                          (:callback callback callback))))
-  (^WebSocketProtocolHandshakeHandler
-   [next-handler, callback]
+  ([next-handler, callback]
    (WebSocketProtocolHandshakeHandler. (types/as-websocket-connection-callback
                                          (:callback callback callback))
                                        (types/as-handler next-handler))))
@@ -306,11 +303,10 @@
       (handler/resource {:resource-manager :class-path
                          :prefix \"public/static\"})
   "
-  (^ResourceHandler
-   [resource-manager]
+  {:tag ResourceHandler}
+  ([resource-manager]
    (ResourceHandler. (types/as-resource-manager resource-manager)))
-  (^ResourceHandler
-   [next-handler, resource-manager]
+  ([next-handler, resource-manager]
    (ResourceHandler. (types/as-resource-manager resource-manager) (types/as-handler next-handler))))
 
 (define-type resource {:alias ::resource
@@ -340,7 +336,7 @@
         configuration map. If not specified then `SessionCookieConfig` is used
         with default settings (see [[session-cookie-config]]).
   "
-  ^SessionAttachmentHandler
+  {:tag SessionAttachmentHandler}
   [next-handler {:keys [session-manager, session-config]
                  :or {session-manager {} session-config {}}}]
   (SessionAttachmentHandler. (types/as-handler next-handler)
@@ -358,7 +354,7 @@
 
   This should only be used behind a proxy that always sets this header,
   otherwise it is possible for an attacker to forge their peer address."
-  ^ProxyPeerAddressHandler
+  {:tag ProxyPeerAddressHandler}
   [next-handler]
   (ProxyPeerAddressHandler. next-handler))
 
@@ -369,7 +365,7 @@
 
 (defn simple-error-page
   "Returns a handler that generates an extremely simple no frills error page."
-  ^SimpleErrorPageHandler
+  {:tag SimpleErrorPageHandler}
   [next-handler]
   (SimpleErrorPageHandler. (types/as-handler next-handler)))
 
@@ -388,7 +384,7 @@
 (defn graceful-shutdown
   "Returns a new handler that can be used to wait for all requests to finish
   before shutting down the server gracefully."
-  ^GracefulShutdownHandler
+  {:tag GracefulShutdownHandler}
   [next-handler]
   (GracefulShutdownHandler. (types/as-handler next-handler)))
 
@@ -399,7 +395,7 @@
 
 (defn request-dump
   "Returns a handler that dumps requests to the log for debugging purposes."
-  ^RequestDumpingHandler
+  {:tag RequestDumpingHandler}
   [next-handler]
   (RequestDumpingHandler. (types/as-handler next-handler)))
 

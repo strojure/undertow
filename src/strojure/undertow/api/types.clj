@@ -118,7 +118,7 @@
 
 (defn as-option-map
   "Coerces Clojure map to Undertow's `OptionMap`."
-  ^OptionMap
+  {:tag OptionMap}
   [m]
   (if (seq m)
     (-> (OptionMap/builder)
