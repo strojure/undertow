@@ -4,9 +4,15 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## `1.0.58-SNAPSHOT`
+## `1.0.61-SNAPSHOT`
 
 Release date `Unreleased`
+
+- 
+
+## `1.0.60-beta8`
+
+Release date `2022-12-24`
 
 - BUGFIX: Missing `stop-service` multimethod for ServerInstance
 
