@@ -1,6 +1,6 @@
 (ns strojure.undertow.api.types
   "Functions to coerce Clojure types to Undertow Java classes."
-  (:import (clojure.lang Fn MultiFn)
+  (:import (clojure.lang Fn IPersistentMap IRecord MultiFn)
            (io.undertow Undertow Undertow$ListenerBuilder)
            (io.undertow.server HttpHandler)
            (io.undertow.server.handlers.resource ResourceManager)
@@ -18,12 +18,14 @@
 (defn object-type
   "Returns object type to be used as dispatch value for multimethods.
 
-  - for maps returns value of the `:type` key or `:default`.
+  - for records returns `(type obj)`.
+  - for maps returns value of the `:type` key or `IPersistentMap`.
   - for other objects returns `(type obj)`.
   "
   [obj]
-  (if (map? obj) (:type obj :default)
-                 (type obj)))
+  (cond (instance? IRecord obj) (type obj)
+        (map? obj) (:type obj IPersistentMap)
+        :else (type obj)))
 
 ;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 
@@ -109,7 +111,7 @@
   {:arglists '([k v])}
   (fn [k _] k))
 
-(defmethod as-option :default
+(defmethod as-option IPersistentMap
   [option value]
   (if (instance? Option option)
     [option value]
@@ -161,7 +163,7 @@
 
 (.addMethod ^MultiFn as-websocket-listener ChannelListener identity)
 
-(defmethod as-websocket-listener :default
+(defmethod as-websocket-listener IPersistentMap
   [config]
   (WebSocketChannelListener. config))
 
@@ -174,7 +176,7 @@
 
 (.addMethod ^MultiFn as-websocket-connection-callback WebSocketConnectionCallback identity)
 
-(defmethod as-websocket-connection-callback :default
+(defmethod as-websocket-connection-callback IPersistentMap
   [obj]
   (as-websocket-connection-callback (as-websocket-listener obj)))
 

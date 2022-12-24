@@ -3,7 +3,7 @@
   (:require [strojure.undertow.api.types :as types]
             [strojure.undertow.handler.session :as session]
             [strojure.undertow.handler.websocket :as websocket])
-  (:import (clojure.lang MultiFn Sequential)
+  (:import (clojure.lang IPersistentMap MultiFn Sequential)
            (io.undertow.server HttpHandler)
            (io.undertow.server.handlers GracefulShutdownHandler NameVirtualHostHandler PathHandler ProxyPeerAddressHandler RequestDumpingHandler)
            (io.undertow.server.handlers.error SimpleErrorPageHandler)
@@ -194,7 +194,7 @@
            (NameVirtualHostHandler.)
            host))
   ([default-handler, config]
-   (-> (virtual-host config)
+   (-> ^NameVirtualHostHandler (virtual-host config)
        (.setDefaultHandler (types/as-handler default-handler)))))
 
 (define-type virtual-host {:alias ::virtual-host
@@ -267,7 +267,7 @@
 ;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 
 ;; Translate :resource-manager to :type
-(defmethod types/as-resource-manager :default
+(defmethod types/as-resource-manager IPersistentMap
   [{:keys [resource-manager] :as config}]
   (types/as-resource-manager (assoc config :type resource-manager)))
 
@@ -315,8 +315,8 @@
 
 ;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 
-(.addMethod ^MultiFn types/as-session-manager :default session/in-memory-session-manager)
-(.addMethod ^MultiFn types/as-session-config :default session/session-cookie-config)
+(.addMethod ^MultiFn types/as-session-manager IPersistentMap session/in-memory-session-manager)
+(.addMethod ^MultiFn types/as-session-config IPersistentMap session/session-cookie-config)
 
 (defn session
   "Returns a new handler that attaches the session to the request. This handler

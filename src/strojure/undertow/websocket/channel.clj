@@ -1,7 +1,7 @@
 (ns strojure.undertow.websocket.channel
   "WebSocket channel API for sending and receiving messages."
   (:require [strojure.undertow.api.types :as types])
-  (:import (clojure.lang IFn)
+  (:import (clojure.lang IFn IPersistentMap)
            (io.undertow.websockets.core CloseMessage WebSocketCallback WebSocketChannel WebSockets)
            (java.nio ByteBuffer)))
 
@@ -9,7 +9,7 @@
 
 ;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 
-(defmethod types/as-websocket-callback :default
+(defmethod types/as-websocket-callback IPersistentMap
   [handlers]
   (reify WebSocketCallback
     (complete

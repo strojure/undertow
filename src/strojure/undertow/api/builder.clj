@@ -1,13 +1,14 @@
 (ns strojure.undertow.api.builder
   "Helper functions to work with `Undertow$Builder`."
   (:require [strojure.undertow.api.types :as types])
-  (:import (io.undertow Undertow Undertow$Builder Undertow$ListenerBuilder Undertow$ListenerType)))
+  (:import (clojure.lang IPersistentMap)
+           (io.undertow Undertow Undertow$Builder Undertow$ListenerBuilder Undertow$ListenerType)))
 
 (set! *warn-on-reflection* true)
 
 ;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 
-(defmethod types/as-listener-builder :default
+(defmethod types/as-listener-builder IPersistentMap
   [{:keys [port, host, https, handler, socket-options, use-proxy-protocol]
     {:keys [key-managers, trust-managers, ssl-context]} :https}]
   (-> (Undertow$ListenerBuilder.)

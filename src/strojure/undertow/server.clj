@@ -2,7 +2,8 @@
   "Undertow server functionality (start, stop, options etc.)."
   (:require [strojure.undertow.api.builder :as builder]
             [strojure.undertow.api.types :as types])
-  (:import (io.undertow Undertow Undertow$Builder UndertowOptions)
+  (:import (clojure.lang IPersistentMap)
+           (io.undertow Undertow Undertow$Builder UndertowOptions)
            (org.xnio Options)
            (strojure.undertow.api.types ServerInstance)))
 
@@ -147,7 +148,7 @@
   [instance]
   (types/server-stop instance))
 
-(defmethod types/server-start :default
+(defmethod types/server-start IPersistentMap
   [{:keys [handler-fn-adapter, builder-fn-wrapper] :as config}]
   (binding [types/*handler-fn-adapter* (or handler-fn-adapter
                                            types/*handler-fn-adapter*)]

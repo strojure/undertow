@@ -1,7 +1,8 @@
 (ns strojure.undertow.handler.websocket
   "WebSocket handler functionality."
   (:require [strojure.undertow.api.types :as types])
-  (:import (io.undertow.websockets WebSocketConnectionCallback)
+  (:import (clojure.lang IPersistentMap)
+           (io.undertow.websockets WebSocketConnectionCallback)
            (io.undertow.websockets.core WebSocketChannel)
            (io.undertow.websockets.spi WebSocketHttpExchange)
            (org.xnio ChannelListener)
@@ -11,7 +12,7 @@
 
 ;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 
-(defmethod types/as-websocket-listener :default
+(defmethod types/as-websocket-listener IPersistentMap
   [config]
   (WebSocketChannelListener. config))
 
