@@ -4,9 +4,13 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## `1.0.61-SNAPSHOT`
+## `1.0.65-SNAPSHOT`
 
 Release date `UNRELEASED`
+
+## `1.0.64-beta9`
+
+Release date `2022-12-25`
 
 - Cast :key-managers, :trust-managers to Java arrays.
 - Upgrade Undertow to version `2.3.2.Final`
