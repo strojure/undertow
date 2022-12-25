@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 Release date `UNRELEASED`
 
 - Cast :key-managers, :trust-managers to Java arrays.
+- Upgrade Undertow to version `2.3.2.Final`
 
 ## `1.0.60-beta8`
 

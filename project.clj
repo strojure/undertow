@@ -3,7 +3,7 @@
   :url "https://github.com/strojure/undertow"
   :license {:name "The MIT License" :url "http://opensource.org/licenses/MIT"}
 
-  :dependencies [[io.undertow/undertow-core "2.3.1.Final"]]
+  :dependencies [[io.undertow/undertow-core "2.3.2.Final"]]
 
   :java-source-paths ["src"]
   :javac-options ["-source" "11" "-target" "11"]
