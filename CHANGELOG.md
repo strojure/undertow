@@ -6,9 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## `1.0.61-SNAPSHOT`
 
-Release date `Unreleased`
+Release date `UNRELEASED`
 
-- 
+- Cast :key-managers, :trust-managers to Java arrays.
 
 ## `1.0.60-beta8`
 

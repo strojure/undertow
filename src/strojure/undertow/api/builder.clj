@@ -2,7 +2,8 @@
   "Helper functions to work with `Undertow$Builder`."
   (:require [strojure.undertow.api.types :as types])
   (:import (clojure.lang IPersistentMap)
-           (io.undertow Undertow Undertow$Builder Undertow$ListenerBuilder Undertow$ListenerType)))
+           (io.undertow Undertow Undertow$Builder Undertow$ListenerBuilder Undertow$ListenerType)
+           (javax.net.ssl KeyManager TrustManager)))
 
 (set! *warn-on-reflection* true)
 
@@ -17,8 +18,8 @@
       (cond-> port (.setPort port))
       (.setHost (or host "localhost"))
       (.setRootHandler handler)
-      (cond-> https (-> (.setKeyManagers key-managers)
-                        (.setTrustManagers trust-managers)
+      (cond-> https (-> (.setKeyManagers (some->> key-managers (into-array KeyManager)))
+                        (.setTrustManagers (some->> trust-managers (into-array TrustManager)))
                         (.setSslContext ssl-context)))
       (.setOverrideSocketOptions (types/as-option-map socket-options))
       (.setUseProxyProtocol (boolean use-proxy-protocol))))

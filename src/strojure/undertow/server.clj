@@ -143,11 +143,6 @@
   [obj]
   (types/server-start obj))
 
-(defn stop
-  "Stops server instance, returns nil."
-  [instance]
-  (types/server-stop instance))
-
 (defmethod types/server-start IPersistentMap
   [{:keys [handler-fn-adapter, builder-fn-wrapper] :as config}]
   (binding [types/*handler-fn-adapter* (or handler-fn-adapter
@@ -162,6 +157,11 @@
 (defmethod types/server-start Undertow$Builder
   [builder]
   (start {:builder-fn-wrapper (constantly builder)}))
+
+(defn stop
+  "Stops server instance, returns nil."
+  [instance]
+  (types/server-stop instance))
 
 ;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 
