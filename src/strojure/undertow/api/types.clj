@@ -1,14 +1,16 @@
 (ns strojure.undertow.api.types
   "Functions to coerce Clojure types to Undertow Java classes."
   (:import (clojure.lang Fn IPersistentMap IRecord MultiFn)
-           (io.undertow Undertow Undertow$ListenerBuilder)
+           (io.undertow Undertow Undertow$ListenerBuilder Undertow$ListenerInfo)
            (io.undertow.server HttpHandler)
            (io.undertow.server.handlers.resource ResourceManager)
            (io.undertow.server.session SessionConfig SessionManager)
            (io.undertow.websockets WebSocketConnectionCallback)
            (io.undertow.websockets.core WebSocketCallback)
            (java.io Closeable)
+           (java.net InetAddress InetSocketAddress)
            (org.xnio ChannelListener Option OptionMap)
+           (org.xnio.nio NioXnioWorker)
            (strojure.undertow.websocket WebSocketChannelListener)))
 
 (set! *warn-on-reflection* true)
@@ -188,5 +190,39 @@
   object-type)
 
 (.addMethod ^MultiFn as-websocket-callback WebSocketCallback identity)
+
+;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+
+(defn deep-bean
+  "Takes a Java object and returns a read-only implementation of the map
+  abstraction based upon its JavaBean properties. Applied recursively and only
+  on instances of `classes`."
+  [classes object]
+  (letfn [(bean* [object]
+            (cond
+              ;; if instance of class in cls - bean recursively
+              (some #(instance? % object) classes)
+              (-> (bean object)
+                  (update-vals bean*))
+              ;; if sequence - bean elements to vector
+              (instance? Iterable object)
+              (into [] (map bean*) object)
+              ;; keep object intact
+              :else object))]
+    (bean* object)))
+
+(defmulti bean*
+  "Takes a Java object and returns a read-only implementation of the map
+  abstraction based upon its JavaBean properties. Applied recursively if
+  necessary. Returns object itself if `bean*` is not assigned for the type."
+  {:arglists '([obj])}
+  object-type)
+
+(.addMethod ^MultiFn bean* :default identity)
+
+(.addMethod ^MultiFn bean* Undertow
+            (partial deep-bean #{Undertow Undertow$ListenerInfo InetSocketAddress InetAddress NioXnioWorker}))
+
+(.addMethod ^MultiFn bean* ServerInstance (comp bean* :undertow))
 
 ;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,

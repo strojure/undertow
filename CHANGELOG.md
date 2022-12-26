@@ -8,6 +8,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 Release date `UNRELEASED`
 
+- Implement `types/bean*` for conversion of Java classes to maps.
+
 ## `1.0.64-beta9`
 
 Release date `2022-12-25`
