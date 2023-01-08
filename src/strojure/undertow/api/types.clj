@@ -1,6 +1,6 @@
 (ns strojure.undertow.api.types
   "Functions to coerce Clojure types to Undertow Java classes."
-  (:import (clojure.lang Fn IPersistentMap IRecord MultiFn)
+  (:import (clojure.lang Fn IPersistentMap IRecord MultiFn Named)
            (io.undertow Undertow Undertow$ListenerBuilder Undertow$ListenerInfo)
            (io.undertow.server HttpHandler)
            (io.undertow.server.handlers.resource ResourceManager)
@@ -23,11 +23,19 @@
   - for records returns `(type obj)`.
   - for maps returns value of the `:type` key or `IPersistentMap`.
   - for other objects returns `(type obj)`.
+
+  If type is not an instance of symbol/keyword/class then class of this instance
+  returned. If `obj` is `Var` it is deref’ed.
   "
   [obj]
-  (cond (instance? IRecord obj) (type obj)
-        (map? obj) (:type obj IPersistentMap)
-        :else (type obj)))
+  (let [obj (cond-> obj (var? obj) (deref))
+        t (cond (instance? IRecord obj) (type obj)
+                (map? obj) (:type obj IPersistentMap)
+                :else (type obj))]
+    (cond (instance? Named t) t
+          (class? t) t
+          (var? t) (object-type t)
+          :else (class t))))
 
 ;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 

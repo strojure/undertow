@@ -3,7 +3,7 @@
   (:require [strojure.undertow.api.types :as types]
             [strojure.undertow.handler.session :as session]
             [strojure.undertow.handler.websocket :as websocket])
-  (:import (clojure.lang IPersistentMap MultiFn Sequential)
+  (:import (clojure.lang Fn IPersistentMap MultiFn Sequential)
            (io.undertow.server HttpHandler)
            (io.undertow.server.handlers GracefulShutdownHandler NameVirtualHostHandler PathHandler ProxyPeerAddressHandler RequestDumpingHandler)
            (io.undertow.server.handlers.error SimpleErrorPageHandler)
@@ -19,26 +19,28 @@
 (defn define-type
   "Adds multimethods for declarative description of HTTP handlers.
 
-  1) `type` A constant to distinguish specific handler, usually handler function
-            itself.
+  1) `sym` A constant to distinguish specific handler, usually symbol of handler
+     function var.
   2) Options:
       - `:as-handler` The function `(fn [obj] handler)` to coerce `obj` to
                       handler.
       - `:as-wrapper` The function `(fn [obj] (fn [handler]))` returning
                       function to wrap another handler.
-      - `:alias` The alias for the `type`, usually keyword.
+      - `:alias` The alias for the `sym`, usually keyword.
   "
   #_{:clj-kondo/ignore [:shadowed-var]}
-  [type {:keys [as-handler, as-wrapper, alias]}]
+  [sym {:keys [as-handler, as-wrapper, alias]}]
   (assert (or (fn? as-handler) (fn? as-wrapper)))
   (when as-handler
-    (.addMethod ^MultiFn types/as-handler type as-handler)
-    (when alias
-      (.addMethod ^MultiFn types/as-handler alias as-handler)))
+    (.addMethod ^MultiFn types/as-handler sym as-handler)
+    (prefer-method types/as-handler sym Fn))
   (when as-wrapper
-    (.addMethod ^MultiFn types/as-wrapper type as-wrapper)
-    (when alias
-      (.addMethod ^MultiFn types/as-wrapper alias as-wrapper))))
+    (.addMethod ^MultiFn types/as-wrapper sym as-wrapper)
+    (prefer-method types/as-wrapper sym Fn))
+  (when-let [v (and (symbol? sym) (resolve sym))]
+    (derive (class @v) sym))
+  (when alias
+    (derive alias sym)))
 
 (defn arity2-wrapper
   "Converts 2-arity function `(fn [handler obj])` to function `(fn [obj])`
@@ -103,8 +105,8 @@
           (-> exchange (.dispatch handler))
           (-> handler (.handleRequest exchange)))))))
 
-(define-type dispatch {:alias ::dispatch
-                       :as-wrapper (arity1-wrapper dispatch)})
+(define-type `dispatch {:alias ::dispatch
+                        :as-wrapper (arity1-wrapper dispatch)})
 
 ;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 
@@ -162,9 +164,9 @@
        (reduce add-prefix-path handler prefix)
        (reduce add-exact-path handler exact)))))
 
-(define-type path {:alias ::path
-                   :as-handler path
-                   :as-wrapper (arity2-wrapper path)})
+(define-type `path {:alias ::path
+                    :as-handler path
+                    :as-wrapper (arity2-wrapper path)})
 
 ;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 
@@ -197,13 +199,15 @@
    (-> ^NameVirtualHostHandler (virtual-host config)
        (.setDefaultHandler (types/as-handler default-handler)))))
 
-(define-type virtual-host {:alias ::virtual-host
-                           :as-handler virtual-host
-                           :as-wrapper (arity2-wrapper virtual-host)})
+(define-type `virtual-host {:alias ::virtual-host
+                            :as-handler virtual-host
+                            :as-wrapper (arity2-wrapper virtual-host)})
 
 (comment
-  (types/as-handler {:type virtual-host :host {"localhost" identity}})
-  (types/as-handler {:type ::virtual-host :host {"localhost" identity}})
+  (types/as-handler {:type virtual-host :host {"localhost" (with-exchange identity)}})
+  (types/as-handler {:type `virtual-host :host {"localhost" (with-exchange identity)}})
+  (types/as-handler {:type ::virtual-host :host {"localhost" (with-exchange identity)}})
+  (types/as-wrapper {:type `virtual-host :host {"localhost" (with-exchange identity)}})
   )
 
 ;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
@@ -260,9 +264,9 @@
                                          (:callback callback callback))
                                        (types/as-handler next-handler))))
 
-(define-type websocket {:alias ::websocket
-                        :as-handler websocket
-                        :as-wrapper (arity2-wrapper websocket)})
+(define-type `websocket {:alias ::websocket
+                         :as-handler websocket
+                         :as-wrapper (arity2-wrapper websocket)})
 
 ;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 
@@ -309,9 +313,12 @@
   ([next-handler, resource-manager]
    (ResourceHandler. (types/as-resource-manager resource-manager) (types/as-handler next-handler))))
 
-(define-type resource {:alias ::resource
-                       :as-handler resource
-                       :as-wrapper (arity2-wrapper resource)})
+(define-type `resource {:alias ::resource
+                        :as-handler resource
+                        :as-wrapper (arity2-wrapper resource)})
+
+(.addMethod ^MultiFn types/as-resource-manager `resource
+            (get-method types/as-resource-manager IPersistentMap))
 
 ;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 
@@ -343,8 +350,8 @@
                              (types/as-session-manager session-manager)
                              (types/as-session-config session-config)))
 
-(define-type session {:alias ::session
-                      :as-wrapper (arity2-wrapper session)})
+(define-type `session {:alias ::session
+                       :as-wrapper (arity2-wrapper session)})
 
 ;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 
@@ -358,8 +365,8 @@
   [next-handler]
   (ProxyPeerAddressHandler. next-handler))
 
-(define-type proxy-peer-address {:alias ::proxy-peer-address
-                                 :as-wrapper (arity1-wrapper proxy-peer-address)})
+(define-type `proxy-peer-address {:alias ::proxy-peer-address
+                                  :as-wrapper (arity1-wrapper proxy-peer-address)})
 
 ;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 
@@ -369,8 +376,8 @@
   [next-handler]
   (SimpleErrorPageHandler. (types/as-handler next-handler)))
 
-(define-type simple-error-page {:alias ::simple-error-page
-                                :as-wrapper (arity1-wrapper simple-error-page)})
+(define-type `simple-error-page {:alias ::simple-error-page
+                                 :as-wrapper (arity1-wrapper simple-error-page)})
 
 (comment
   (types/as-handler {:type simple-error-page})
@@ -388,8 +395,8 @@
   [next-handler]
   (GracefulShutdownHandler. (types/as-handler next-handler)))
 
-(define-type graceful-shutdown {:alias ::graceful-shutdown
-                                :as-wrapper (arity1-wrapper graceful-shutdown)})
+(define-type `graceful-shutdown {:alias ::graceful-shutdown
+                                 :as-wrapper (arity1-wrapper graceful-shutdown)})
 
 ;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 
@@ -399,7 +406,7 @@
   [next-handler]
   (RequestDumpingHandler. (types/as-handler next-handler)))
 
-(define-type request-dump {:alias ::request-dump
-                           :as-wrapper (arity1-wrapper request-dump)})
+(define-type `request-dump {:alias ::request-dump
+                            :as-wrapper (arity1-wrapper request-dump)})
 
 ;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,

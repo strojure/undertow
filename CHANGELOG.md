@@ -9,6 +9,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 Release date `UNRELEASED`
 
 - Implement `types/bean*` for conversion of Java classes to maps.
+- Define handler types as symbols.
+- Define handler type aliases via inheritance.
+- Change `object-type` implementation for symbol/keyword/class/var.
+- Fix `as-resource-manager` for `handler/resource`.
 
 ## `1.0.64-beta9`
 
