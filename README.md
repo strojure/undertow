@@ -131,6 +131,31 @@ The Undertow handler for this case can be configured in different ways:
   referred as symbols."
   []
   [;; Supplemental useful handlers.
+   {:type `handler/graceful-shutdown}
+   {:type `handler/proxy-peer-address}
+   {:type `handler/simple-error-page}
+   ;; The handler for webapi hostname.
+   {:type `handler/virtual-host
+    :host {"app1.company.com" (my-handler :app1-handler)
+           "app2.company.com" (my-handler :app2-handler)}}
+   ;; Path specific handlers.
+   {:type `handler/path
+    :prefix {"static" {:type `handler/resource :resource-manager :class-path
+                       :prefix "public/static"}}
+    :exact {"websocket" {:type `handler/websocket :callback websocket-callback}}}
+   ;; Enable sessions for next handlers.
+   {:type `handler/session}
+   ;; The handlers for app hostnames.
+   {:type `handler/virtual-host
+    :host {"webapi.company.com" (my-handler :webapi-handler)}}
+   ;; Last resort handler
+   (my-handler :default-handler)])
+
+(defn instance-handler-config
+  "Declarative handler configuration as sequence of chaining handlers which are
+  referred as handler function instances."
+  []
+  [;; Supplemental useful handlers.
    {:type handler/graceful-shutdown}
    {:type handler/proxy-peer-address}
    {:type handler/simple-error-page}
@@ -180,6 +205,7 @@ The Undertow handler for this case can be configured in different ways:
 (comment
   (with-open [_ (server/start {:handler (imperative-handler-config)})])
   (with-open [_ (server/start {:handler (symbol-handler-config)})])
+  (with-open [_ (server/start {:handler (instance-handler-config)})])
   (with-open [_ (server/start {:handler (keyword-handler-config)})])
   )
 ```
