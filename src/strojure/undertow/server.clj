@@ -92,7 +92,7 @@
           ;; Enable sessions for next handlers (above).
           (handler/session {})
           ;; Path specific handlers.
-          (handler/path {:prefix {\"static\" (handler/resource {:resource-manager :class-path
+          (handler/path {:prefix {\"static\" (handler/resource {:resource-manager :classpath-files
                                                               :prefix \"public/static\"})}
                          :exact {\"websocket\" (handler/websocket websocket-callback)}})
           ;; The handler for webapi hostname.
@@ -114,7 +114,7 @@
                \"app2.company.com\" (my-handler :app2-handler)}}
        ;; Path specific handlers.
        {:type handler/path
-        :prefix {\"static\" {:type handler/resource :resource-manager :class-path
+        :prefix {\"static\" {:type handler/resource :resource-manager :classpath-files
                            :prefix \"public/static\"}}
         :exact {\"websocket\" {:type handler/websocket :callback websocket-callback}}}
        ;; Enable sessions for next handlers.

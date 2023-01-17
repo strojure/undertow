@@ -7,7 +7,7 @@
            (io.undertow.server HttpHandler)
            (io.undertow.server.handlers GracefulShutdownHandler NameVirtualHostHandler PathHandler ProxyPeerAddressHandler RequestDumpingHandler)
            (io.undertow.server.handlers.error SimpleErrorPageHandler)
-           (io.undertow.server.handlers.resource ClassPathResourceManager ResourceHandler)
+           (io.undertow.server.handlers.resource ClassPathResourceManager ResourceHandler ResourceManager)
            (io.undertow.server.session SessionAttachmentHandler)
            (io.undertow.websockets WebSocketConnectionCallback WebSocketProtocolHandshakeHandler)
            (org.xnio ChannelListener)))
@@ -275,10 +275,19 @@
   [{:keys [resource-manager] :as config}]
   (types/as-resource-manager (assoc config :type resource-manager)))
 
-(defmethod types/as-resource-manager :class-path
-  [{:keys [prefix]}]
-  (let [prefix (or prefix "public")]
-    (ClassPathResourceManager. (ClassLoader/getSystemClassLoader) ^String prefix)))
+;; ResourceManager for files from class path. Ignores directories to pass them
+;; through instead of responding with 403 Forbidden.
+(defmethod types/as-resource-manager :classpath-files
+  [{:keys [prefix] :or {prefix "public"}}]
+  (let [manager (ClassPathResourceManager. (ClassLoader/getSystemClassLoader) ^String prefix)]
+    #_{:clj-kondo/ignore [:shadowed-var]}
+    (reify ResourceManager
+      (getResource [_ path]
+        (let [resource (.getResource manager path)]
+          ;; Return `nil` if resource is a directory.
+          (when-not (some-> resource (.isDirectory))
+            resource)))
+      (isResourceChangeListenerSupported [_] false))))
 
 (defn resource
   "Returns a new resource handler with optional next handler that is called if
@@ -296,15 +305,17 @@
       - `:resource-manager` The type of configuration manager, keyword.
           + Used as `:type` in configuration passed to [[api.types/as-resource-manager]].
 
-    Configuration options of `:class-path` resource manager:
+    Configuration options of `:classpath-files` resource manager:
 
       - `:prefix` The prefix that is appended to resources that are to be
                   loaded, string.
           + Default prefix is \"public\".
+          + The `:classpath-files` resource manager ignores directories to
+            avoid 403 Forbidden response.
 
   Example:
 
-      (handler/resource {:resource-manager :class-path
+      (handler/resource {:resource-manager :classpath-files
                          :prefix \"public/static\"})
   "
   {:tag ResourceHandler}

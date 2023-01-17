@@ -8,6 +8,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 Release date `UNRELEASED`
 
+- Change `:class-path` resource manager to `:classpath-files` ignoring
+  directories.
+
 ## `1.0.69-rc1`
 
 Release date `2023-01-13`
