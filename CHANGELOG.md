@@ -4,9 +4,15 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## `1.0.70-SNAPSHOT`
+## `1.0.73-SNAPSHOT`
 
 Release date `UNRELEASED`
+
+- 
+
+## `1.0.72-rc2`
+
+Release date `2023-01-17`
 
 - Change `:class-path` resource manager to `:classpath-files` ignoring
   directories.
