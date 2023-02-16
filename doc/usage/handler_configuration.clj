@@ -32,6 +32,8 @@
       (handler/path {:prefix {"static" (handler/resource {:resource-manager :classpath-files
                                                           :prefix "public/static"})}
                      :exact {"websocket" (handler/websocket websocket-callback)}})
+      ;; Add fixed response headers.
+      (handler/set-response-header {"X-Content-Type-Options" "nosniff"})
       ;; The handler for webapi hostname.
       (handler/virtual-host {:host {"webapi.company.com" (my-handler :webapi-handler)}})
       ;; Supplemental useful handlers.
@@ -49,8 +51,10 @@
    {:type `handler/simple-error-page}
    ;; The handler for webapi hostname.
    {:type `handler/virtual-host
-    :host {"app1.company.com" (my-handler :app1-handler)
-           "app2.company.com" (my-handler :app2-handler)}}
+    :host {"webapi.company.com" (my-handler :webapi-handler)}}
+   ;; Add fixed response headers.
+   {:type `handler/set-response-header
+    :header {"X-Content-Type-Options" "nosniff"}}
    ;; Path specific handlers.
    {:type `handler/path
     :prefix {"static" {:type `handler/resource :resource-manager :classpath-files
@@ -60,7 +64,8 @@
    {:type `handler/session}
    ;; The handlers for app hostnames.
    {:type `handler/virtual-host
-    :host {"webapi.company.com" (my-handler :webapi-handler)}}
+    :host {"app1.company.com" (my-handler :app1-handler)
+           "app2.company.com" (my-handler :app2-handler)}}
    ;; Last resort handler
    (my-handler :default-handler)])
 
@@ -74,8 +79,10 @@
    {:type handler/simple-error-page}
    ;; The handler for webapi hostname.
    {:type handler/virtual-host
-    :host {"app1.company.com" (my-handler :app1-handler)
-           "app2.company.com" (my-handler :app2-handler)}}
+    :host {"webapi.company.com" (my-handler :webapi-handler)}}
+   ;; Add fixed response headers.
+   {:type handler/set-response-header
+    :header {"X-Content-Type-Options" "nosniff"}}
    ;; Path specific handlers.
    {:type handler/path
     :prefix {"static" {:type handler/resource :resource-manager :classpath-files
@@ -85,7 +92,8 @@
    {:type handler/session}
    ;; The handlers for app hostnames.
    {:type handler/virtual-host
-    :host {"webapi.company.com" (my-handler :webapi-handler)}}
+    :host {"app1.company.com" (my-handler :app1-handler)
+           "app2.company.com" (my-handler :app2-handler)}}
    ;; Last resort handler
    (my-handler :default-handler)])
 
@@ -99,8 +107,10 @@
    {:type ::handler/simple-error-page}
    ;; The handler for webapi hostname.
    {:type ::handler/virtual-host
-    :host {"app1.company.com" (my-handler :app1-handler)
-           "app2.company.com" (my-handler :app2-handler)}}
+    :host {"webapi.company.com" (my-handler :webapi-handler)}}
+   ;; Add fixed response headers.
+   {:type ::handler/set-response-header
+    :header {"X-Content-Type-Options" "nosniff"}}
    ;; Path specific handlers.
    {:type ::handler/path
     :prefix {"static" {:type ::handler/resource :resource-manager :classpath-files
@@ -111,7 +121,8 @@
    {:type ::handler/session}
    ;; The handlers for app hostnames.
    {:type ::handler/virtual-host
-    :host {"webapi.company.com" (my-handler :webapi-handler)}}
+    :host {"app1.company.com" (my-handler :app1-handler)
+           "app2.company.com" (my-handler :app2-handler)}}
    ;; Last resort handler
    (my-handler :default-handler)])
 

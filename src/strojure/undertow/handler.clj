@@ -4,8 +4,9 @@
             [strojure.undertow.handler.session :as session]
             [strojure.undertow.handler.websocket :as websocket])
   (:import (clojure.lang Fn IPersistentMap MultiFn Sequential)
+           (io.undertow.attribute ExchangeAttribute)
            (io.undertow.server HttpHandler)
-           (io.undertow.server.handlers GracefulShutdownHandler NameVirtualHostHandler PathHandler ProxyPeerAddressHandler RequestDumpingHandler)
+           (io.undertow.server.handlers GracefulShutdownHandler NameVirtualHostHandler PathHandler ProxyPeerAddressHandler RequestDumpingHandler SetHeaderHandler)
            (io.undertow.server.handlers.error SimpleErrorPageHandler)
            (io.undertow.server.handlers.resource ClassPathResourceManager ResourceHandler ResourceManager)
            (io.undertow.server.session SessionAttachmentHandler)
@@ -419,5 +420,58 @@
 
 (define-type `request-dump {:alias ::request-dump
                             :as-wrapper (arity1-wrapper request-dump)})
+
+;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+
+(defn set-response-header
+  "Returns a new handler which sets fixed response headers.
+
+  The `headers` is a map of string header names and values where value is one of:
+
+  - a string value to be set as is;
+  - a function `(fn [^HttpServerExchange exchange] header-value)` which returns
+    header value for `exchange`;
+  - an instance of `ExchangeAttribute` to read header value from exchange.
+
+  Example:
+
+      (set-response-header handler {\"X-Content-Type-Options\" \"nosniff\"})
+
+  The `headers` can be a map `{:header {...}}` for declarative description:
+
+      {:type `set-response-header :header {\"Content-Type\" \"text/html\"
+                                           \"X-Content-Type-Options\" \"nosniff\"}}
+
+  "
+  {:tag HttpHandler}
+  [next-handler, headers]
+  (letfn [(wrap-set-header
+            [^HttpHandler handler [^String header, value]]
+            (cond
+              (string? value)
+              (SetHeaderHandler. handler header ^String value)
+              (fn? value)
+              (SetHeaderHandler. handler header (reify
+                                                  ExchangeAttribute (readAttribute [_ exchange]
+                                                                      (value exchange))
+                                                  Object (toString [_] (str value))))
+              (instance? ExchangeAttribute value)
+              (SetHeaderHandler. handler header ^ExchangeAttribute value)
+              :else
+              (throw (ex-info (str "Require string or ExchangeAttribute as header value: " [header value])
+                              {:header header :value value}))))]
+    (->> (:header headers headers)
+         (reduce wrap-set-header (types/as-handler next-handler)))))
+
+(define-type `set-response-header {:alias ::set-response-header
+                                   :as-wrapper (arity2-wrapper set-response-header)})
+
+(comment
+  ((types/as-wrapper {:type `set-response-header
+                      :header {"Content-Type" "text/html"
+                               "X-Content-Type-Options" "nosniff"
+                               "X-Attribute" (fn x-attribute [_exchange] "VALUE")}})
+   (with-exchange identity))
+  )
 
 ;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
