@@ -192,12 +192,13 @@
 
 ;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 
-(defmulti as-websocket-callback
-  "Coerces `obj` to the instance of `WebSocketCallback`."
-  {:arglists '([obj]) :tag WebSocketCallback}
-  object-type)
+(defprotocol AsWebSocketCallback
+  (as-websocket-callback
+    ^WebSocketCallback [obj]
+    "Coerces `obj` to the instance of `WebSocketCallback`."))
 
-(.addMethod ^MultiFn as-websocket-callback WebSocketCallback identity)
+(extend-protocol AsWebSocketCallback WebSocketCallback
+  (as-websocket-callback [callback] callback))
 
 ;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 

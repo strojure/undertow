@@ -8,7 +8,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 Release date `UNRELEASED`
 
-- 
+- Implement `types/as-websocket-callback` using protocols for better 
+  performance.
 
 ## `1.0.72-rc2`
 

@@ -9,27 +9,29 @@
 
 ;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 
-(defmethod types/as-websocket-callback IPersistentMap
-  [handlers]
-  (reify WebSocketCallback
-    (complete
-      [_ channel _]
-      (when-let [on-complete (:on-complete handlers)]
-        (on-complete {:callback :on-complete :channel channel})))
-    (onError
-      [_ channel _ throwable]
-      (when-let [on-error (:on-error handlers)]
-        (on-error {:callback :on-error :channel channel :error throwable})))))
+(extend-protocol types/AsWebSocketCallback IPersistentMap
+  (as-websocket-callback
+    [handlers]
+    (reify WebSocketCallback
+      (complete
+        [_ channel _]
+        (when-let [on-complete (:on-complete handlers)]
+          (on-complete {:callback :on-complete :channel channel})))
+      (onError
+        [_ channel _ throwable]
+        (when-let [on-error (:on-error handlers)]
+          (on-error {:callback :on-error :channel channel :error throwable}))))))
 
-(defmethod types/as-websocket-callback IFn
-  [callback-fn]
-  (reify WebSocketCallback
-    (complete
-      [_ channel _]
-      (callback-fn {:callback :on-complete :channel channel}))
-    (onError
-      [_ channel _ throwable]
-      (callback-fn {:callback :on-error :channel channel :error throwable}))))
+(extend-protocol types/AsWebSocketCallback IFn
+  (as-websocket-callback
+    [callback-fn]
+    (reify WebSocketCallback
+      (complete
+        [_ channel _]
+        (callback-fn {:callback :on-complete :channel channel}))
+      (onError
+        [_ channel _ throwable]
+        (callback-fn {:callback :on-error :channel channel :error throwable})))))
 
 (defprotocol WebSocketSendText
   (send-text
