@@ -174,16 +174,19 @@
 
 ;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 
-(defmulti as-websocket-connection-callback
-  "Coerces `obj` to the instance of `WebSocketConnectionCallback`."
-  {:arglists '([obj]) :tag WebSocketConnectionCallback}
-  object-type)
+(defprotocol AsWebSocketConnectionCallback
+  (as-websocket-connection-callback
+    ^WebSocketConnectionCallback [obj]
+    "Coerces `obj` to the instance of `WebSocketConnectionCallback`."))
 
-(.addMethod ^MultiFn as-websocket-connection-callback WebSocketConnectionCallback identity)
+(extend-protocol AsWebSocketConnectionCallback WebSocketConnectionCallback
+  (as-websocket-connection-callback
+    [callback] callback))
 
-(defmethod as-websocket-connection-callback IPersistentMap
-  [obj]
-  (as-websocket-connection-callback (as-websocket-listener obj)))
+(extend-protocol AsWebSocketConnectionCallback IPersistentMap
+  (as-websocket-connection-callback
+    [config]
+    (as-websocket-connection-callback (as-websocket-listener config))))
 
 ;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 

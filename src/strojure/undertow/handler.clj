@@ -10,7 +10,7 @@
            (io.undertow.server.handlers.error SimpleErrorPageHandler)
            (io.undertow.server.handlers.resource ClassPathResourceManager ResourceHandler ResourceManager)
            (io.undertow.server.session SessionAttachmentHandler)
-           (io.undertow.websockets WebSocketConnectionCallback WebSocketProtocolHandshakeHandler)
+           (io.undertow.websockets WebSocketProtocolHandshakeHandler)
            (org.xnio ChannelListener)))
 
 (set! *warn-on-reflection* true)
@@ -213,11 +213,10 @@
 
 ;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 
-(.addMethod ^MultiFn types/as-websocket-connection-callback ChannelListener
-            websocket/listener-as-connection-callback)
-
-(prefer-method types/as-websocket-connection-callback
-               ChannelListener WebSocketConnectionCallback)
+(extend-protocol types/AsWebSocketConnectionCallback ChannelListener
+  (as-websocket-connection-callback
+    [listener]
+    (websocket/listener-as-connection-callback listener)))
 
 (defn websocket
   "Returns a new web socket session handler with optional next handler to invoke
