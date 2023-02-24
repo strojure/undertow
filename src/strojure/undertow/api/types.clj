@@ -106,12 +106,13 @@
 
 ;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 
-(defmulti as-listener-builder
-  "Coerces `obj` to the instance of `io.undertow.Undertow$ListenerBuilder`."
-  {:arglists '([obj]) :tag Undertow$ListenerBuilder}
-  object-type)
+(defprotocol AsListenerBuilder
+  (as-listener-builder
+    ^Undertow$ListenerBuilder [obj]
+    "Coerces `obj` to the instance of `io.undertow.Undertow$ListenerBuilder`."))
 
-(.addMethod ^MultiFn as-listener-builder Undertow$ListenerBuilder identity)
+(extend-protocol AsListenerBuilder Undertow$ListenerBuilder
+  (as-listener-builder [builder] builder))
 
 ;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 

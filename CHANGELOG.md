@@ -11,6 +11,7 @@ Release date `UNRELEASED`
 - Implement `types/as-websocket-callback` using protocols for better 
   performance.
 - Add `handler/set-response-header`.
+- Implement `types/as-listener-builder` using protocol.
 
 ## `1.0.72-rc2`
 

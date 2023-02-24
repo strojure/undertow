@@ -9,20 +9,21 @@
 
 ;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 
-(defmethod types/as-listener-builder IPersistentMap
-  [{:keys [port, host, https, handler, socket-options, use-proxy-protocol]
-    {:keys [key-managers, trust-managers, ssl-context]} :https}]
-  (-> (Undertow$ListenerBuilder.)
-      (.setType (if https Undertow$ListenerType/HTTPS
-                          Undertow$ListenerType/HTTP))
-      (cond-> port (.setPort port))
-      (.setHost (or host "localhost"))
-      (.setRootHandler handler)
-      (cond-> https (-> (.setKeyManagers (some->> key-managers (into-array KeyManager)))
-                        (.setTrustManagers (some->> trust-managers (into-array TrustManager)))
-                        (.setSslContext ssl-context)))
-      (.setOverrideSocketOptions (types/as-option-map socket-options))
-      (.setUseProxyProtocol (boolean use-proxy-protocol))))
+(extend-protocol types/AsListenerBuilder IPersistentMap
+  (as-listener-builder
+    [{:keys [port, host, https, handler, socket-options, use-proxy-protocol]
+      {:keys [key-managers, trust-managers, ssl-context]} :https}]
+    (-> (Undertow$ListenerBuilder.)
+        (.setType (if https Undertow$ListenerType/HTTPS
+                            Undertow$ListenerType/HTTP))
+        (cond-> port (.setPort port))
+        (.setHost (or host "localhost"))
+        (.setRootHandler handler)
+        (cond-> https (-> (.setKeyManagers (some->> key-managers (into-array KeyManager)))
+                          (.setTrustManagers (some->> trust-managers (into-array TrustManager)))
+                          (.setSslContext ssl-context)))
+        (.setOverrideSocketOptions (types/as-option-map socket-options))
+        (.setUseProxyProtocol (boolean use-proxy-protocol)))))
 
 (defn add-listener
   "Adds listener given builder instance or configuration map.
