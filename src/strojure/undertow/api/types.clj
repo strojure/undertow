@@ -160,16 +160,17 @@
 
 ;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 
-(defmulti as-websocket-listener
-  "Coerces `obj` to the instance of `ChannelListener`."
-  {:arglists '([obj]) :tag ChannelListener}
-  object-type)
+(defprotocol AsWebSocketChannelListener
+  (as-websocket-listener
+    ^ChannelListener [obj]
+    "Coerces `obj` to the instance of `ChannelListener`."))
 
-(.addMethod ^MultiFn as-websocket-listener ChannelListener identity)
+(extend-protocol AsWebSocketChannelListener ChannelListener
+  (as-websocket-listener [listener] listener))
 
-(defmethod as-websocket-listener IPersistentMap
-  [config]
-  (WebSocketChannelListener. config))
+(extend-protocol AsWebSocketChannelListener IPersistentMap
+  (as-websocket-listener [config]
+    (WebSocketChannelListener. config)))
 
 ;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 

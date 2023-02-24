@@ -12,6 +12,7 @@ Release date `UNRELEASED`
   performance.
 - Add `handler/set-response-header`.
 - Implement `types/as-listener-builder` using protocol.
+- Implement `types/as-websocket-listener` using protocol.
 
 ## `1.0.72-rc2`
 
