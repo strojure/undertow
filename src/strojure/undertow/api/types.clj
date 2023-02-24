@@ -9,7 +9,7 @@
            (io.undertow.websockets.core WebSocketCallback)
            (java.io Closeable)
            (java.net InetAddress InetSocketAddress)
-           (org.xnio ChannelListener Option OptionMap)
+           (org.xnio ChannelListener OptionMap)
            (org.xnio.nio NioXnioWorker)
            (strojure.undertow.websocket WebSocketChannelListener)))
 
@@ -121,13 +121,6 @@
   Used to create keyword aliases to Java objects of Undertow objects."
   {:arglists '([k v])}
   (fn [k _] k))
-
-(defmethod as-option IPersistentMap
-  [option value]
-  (if (instance? Option option)
-    [option value]
-    (throw (ex-info (str "Unknown undertow option: " option "\n"
-                         "Use `define-option` to define new options.") {}))))
 
 (defn as-option-map
   "Coerces Clojure map to Undertow's `OptionMap`."
