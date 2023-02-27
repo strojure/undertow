@@ -108,7 +108,8 @@
 
 (defprotocol AsListenerBuilder
   (as-listener-builder
-    ^Undertow$ListenerBuilder [obj]
+    ^io.undertow.Undertow$ListenerBuilder
+    [obj]
     "Coerces `obj` to the instance of `io.undertow.Undertow$ListenerBuilder`."))
 
 (extend-protocol AsListenerBuilder Undertow$ListenerBuilder
@@ -179,7 +180,8 @@
 
 (defprotocol AsWebSocketChannelListener
   (as-websocket-listener
-    ^ChannelListener [obj]
+    ^org.xnio.ChannelListener
+    [obj]
     "Coerces `obj` to the instance of `ChannelListener`."))
 
 (extend-protocol AsWebSocketChannelListener ChannelListener
@@ -210,7 +212,8 @@
 
 (defprotocol AsWebSocketCallback
   (as-websocket-callback
-    ^WebSocketCallback [obj]
+    ^io.undertow.websockets.core.WebSocketCallback
+    [obj]
     "Coerces `obj` to the instance of `WebSocketCallback`."))
 
 (extend-protocol AsWebSocketCallback WebSocketCallback

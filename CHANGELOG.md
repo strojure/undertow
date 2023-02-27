@@ -15,6 +15,7 @@ Release date `UNRELEASED`
 - Implement `types/as-websocket-listener` using protocol.
 - Implement `types/as-websocket-connection-callback` using protocol.
 - Add `handler/on-response-commit`.
+- Use full path in protocol function typehints.
 
 ## `1.0.72-rc2`
 
