@@ -110,10 +110,10 @@
                         :as-wrapper (arity1-wrapper dispatch)})
 
 ;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-
-;;; Standard Undertow handlers.
-;;; There are more handlers available in the `io.undertow.Handlers` package.
-
+;;
+;; ## Standard Undertow handlers
+;;
+;; There are more handlers available in the `io.undertow.Handlers` package.
 ;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 
 (defn path

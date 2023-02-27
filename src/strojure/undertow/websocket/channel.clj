@@ -107,8 +107,8 @@
 
 ;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 
-;;; Status codes to close messages: http://tools.ietf.org/html/rfc6455#section-7.4
-;;; See also https://github.com/Luka967/websocket-close-codes
+;; - Status codes to close messages: http://tools.ietf.org/html/rfc6455#section-7.4
+;; - See also https://github.com/Luka967/websocket-close-codes
 
 (defn normal-closure
   "The code `1000` indicates a normal closure, meaning that the purpose for

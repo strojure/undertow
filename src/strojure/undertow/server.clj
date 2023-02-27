@@ -182,9 +182,9 @@
      [_ v]
      [option (coerce-fn v)])))
 
-;;;; Options
+;; ## Options ##
 
-;;; XNIO workers
+;; ### XNIO workers ###
 
 ;; The number of IO threads to create. IO threads perform non-blocking tasks,
 ;; and should never perform blocking operations because they are responsible for
@@ -201,7 +201,7 @@
 (define-option :xnio/worker-task-core-threads
                Options/WORKER_TASK_CORE_THREADS int)
 
-;;; Common Listener Options
+;; ### Common Listener Options ###
 
 ;; The maximum size of a HTTP header block, in bytes. If a client sends more
 ;; data that this as part of the request header then the connection will be
@@ -321,7 +321,7 @@
 (define-option :undertow/no-request-timeout
                UndertowOptions/NO_REQUEST_TIMEOUT int)
 
-;;; HTTP Listener
+;; ### HTTP Listener ###
 
 ;; If this is true then the connection can be processed as a HTTP/2 prior
 ;; knowledge connection. If a HTTP/2 client connects directly to the listener
@@ -330,7 +330,7 @@
 (define-option :undertow/enable-http2
                UndertowOptions/ENABLE_HTTP2 boolean)
 
-;;; HTTP2 Listener
+;; ### HTTP2 Listener ###
 
 ;; The size of the header table that is used for compression. Increasing this
 ;; will use more memory per connection, but potentially decrease the amount of
