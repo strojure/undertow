@@ -14,6 +14,7 @@ Release date `UNRELEASED`
 - Implement `types/as-listener-builder` using protocol.
 - Implement `types/as-websocket-listener` using protocol.
 - Implement `types/as-websocket-connection-callback` using protocol.
+- Add `handler/on-response-commit`.
 
 ## `1.0.72-rc2`
 

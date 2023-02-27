@@ -110,6 +110,45 @@
                         :as-wrapper (arity1-wrapper dispatch)})
 
 ;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+
+(defn on-response-commit
+  "Returns a new handler which adds `listener` callback that will be invoked
+  just before response is commit. 1-arity function returns handler wrapper.
+
+  The `listener` is one of:
+  - a function `(fn [exchange] ...)`;
+  - a configuration map with `:listener` key;
+  - an instance of `io.undertow.server.ResponseCommitListener`.
+
+  Example:
+
+      (defn- set-content-type-options
+      [^HttpServerExchange exchange]
+      (let [headers (.getResponseHeaders exchange)]
+        (when (.contains headers Headers/CONTENT_TYPE)
+          (.put headers Headers/X_CONTENT_TYPE_OPTIONS \"nosniff\"))))
+
+      (on-response-commit next-handler set-content-type-options)
+
+      {:type handler/on-response-commit :listener set-content-type-options}
+  "
+  {:arglists '([listener] [handler, listener] [handler {:keys [listener]}])}
+  ([listener]
+   (fn wrap-on-response-commit
+     [next-handler]
+     (on-response-commit next-handler listener)))
+  (^HttpHandler
+   [^HttpHandler next-handler, listener]
+   (let [listener (types/as-response-commit-listener (or (:listener listener) listener))]
+     (reify HttpHandler
+       (handleRequest [_ exchange]
+         (doto exchange (.addResponseCommitListener listener))
+         (.handleRequest next-handler exchange))))))
+
+(define-type `on-response-commit {:alias ::on-response-commit
+                                  :as-wrapper (arity2-wrapper on-response-commit)})
+
+;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 ;;
 ;; ## Standard Undertow handlers
 ;;

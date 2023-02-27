@@ -89,7 +89,8 @@ The Undertow handler for this case can be configured in different ways:
 (ns usage.handler-configuration
   (:require [strojure.undertow.handler :as handler]
             [strojure.undertow.server :as server])
-  (:import (io.undertow.server HttpServerExchange)))
+  (:import (io.undertow.server HttpServerExchange)
+           (io.undertow.util Headers)))
 
 (defn- my-handler
   [label]
@@ -103,6 +104,12 @@ The Undertow handler for this case can be configured in different ways:
    :on-message (fn [{:keys [callback channel text]}] (comment callback channel text))
    :on-close (fn [{:keys [callback channel code reason]}] (comment callback channel code reason))
    :on-error (fn [{:keys [callback channel error]}] (comment callback channel error))})
+
+(defn- set-content-type-options
+  [^HttpServerExchange exchange]
+  (let [headers (.getResponseHeaders exchange)]
+    (when (.contains headers Headers/CONTENT_TYPE)
+      (.put headers Headers/X_CONTENT_TYPE_OPTIONS "nosniff"))))
 
 (defn imperative-handler-config
   "The handler configuration created by invocation of series of handler
@@ -120,8 +127,10 @@ The Undertow handler for this case can be configured in different ways:
       (handler/path {:prefix {"static" (handler/resource {:resource-manager :classpath-files
                                                           :prefix "public/static"})}
                      :exact {"websocket" (handler/websocket websocket-callback)}})
+      ;; Modify response before commit.
+      (handler/on-response-commit set-content-type-options)
       ;; Add fixed response headers.
-      (handler/set-response-header {"X-Content-Type-Options" "nosniff"})
+      (handler/set-response-header {"X-Frame-Options" "DENY"})
       ;; The handler for webapi hostname.
       (handler/virtual-host {:host {"webapi.company.com" (my-handler :webapi-handler)}})
       ;; Supplemental useful handlers.
@@ -141,8 +150,9 @@ The Undertow handler for this case can be configured in different ways:
    {:type `handler/virtual-host
     :host {"webapi.company.com" (my-handler :webapi-handler)}}
    ;; Add fixed response headers.
-   {:type `handler/set-response-header
-    :header {"X-Content-Type-Options" "nosniff"}}
+   {:type `handler/set-response-header :header {"X-Frame-Options" "DENY"}}
+   ;; Modify response before commit.
+   {:type `handler/on-response-commit :listener set-content-type-options}
    ;; Path specific handlers.
    {:type `handler/path
     :prefix {"static" {:type `handler/resource :resource-manager :classpath-files
@@ -169,8 +179,9 @@ The Undertow handler for this case can be configured in different ways:
    {:type handler/virtual-host
     :host {"webapi.company.com" (my-handler :webapi-handler)}}
    ;; Add fixed response headers.
-   {:type handler/set-response-header
-    :header {"X-Content-Type-Options" "nosniff"}}
+   {:type handler/set-response-header :header {"X-Frame-Options" "DENY"}}
+   ;; Modify response before commit.
+   {:type handler/on-response-commit :listener set-content-type-options}
    ;; Path specific handlers.
    {:type handler/path
     :prefix {"static" {:type handler/resource :resource-manager :classpath-files
@@ -197,8 +208,9 @@ The Undertow handler for this case can be configured in different ways:
    {:type ::handler/virtual-host
     :host {"webapi.company.com" (my-handler :webapi-handler)}}
    ;; Add fixed response headers.
-   {:type ::handler/set-response-header
-    :header {"X-Content-Type-Options" "nosniff"}}
+   {:type ::handler/set-response-header :header {"X-Frame-Options" "DENY"}}
+   ;; Modify response before commit.
+   {:type ::handler/on-response-commit :listener set-content-type-options}
    ;; Path specific handlers.
    {:type ::handler/path
     :prefix {"static" {:type ::handler/resource :resource-manager :classpath-files

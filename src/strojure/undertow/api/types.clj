@@ -1,8 +1,8 @@
 (ns strojure.undertow.api.types
   "Functions to coerce Clojure types to Undertow Java classes."
-  (:import (clojure.lang Fn IPersistentMap IRecord MultiFn Named)
+  (:import (clojure.lang AFn Fn IPersistentMap IRecord MultiFn Named)
            (io.undertow Undertow Undertow$ListenerBuilder Undertow$ListenerInfo)
-           (io.undertow.server HttpHandler)
+           (io.undertow.server HttpHandler ResponseCommitListener)
            (io.undertow.server.handlers.resource ResourceManager)
            (io.undertow.server.session SessionConfig SessionManager)
            (io.undertow.websockets WebSocketConnectionCallback)
@@ -160,6 +160,23 @@
 
 ;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 
+(defprotocol AsResponseCommitListener
+  (as-response-commit-listener
+    ^io.undertow.server.ResponseCommitListener
+    [obj]
+    "Coerces `obj` to the instance of `ResponseCommitListener`."))
+
+(extend-protocol AsResponseCommitListener ResponseCommitListener
+  (as-response-commit-listener [listener] listener))
+
+(extend-protocol AsResponseCommitListener AFn
+  (as-response-commit-listener
+    [f]
+    (reify ResponseCommitListener
+      (beforeCommit [_ exchange] (.invoke f exchange)))))
+
+;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+
 (defprotocol AsWebSocketChannelListener
   (as-websocket-listener
     ^ChannelListener [obj]
@@ -176,7 +193,8 @@
 
 (defprotocol AsWebSocketConnectionCallback
   (as-websocket-connection-callback
-    ^WebSocketConnectionCallback [obj]
+    ^io.undertow.websockets.WebSocketConnectionCallback
+    [obj]
     "Coerces `obj` to the instance of `WebSocketConnectionCallback`."))
 
 (extend-protocol AsWebSocketConnectionCallback WebSocketConnectionCallback
