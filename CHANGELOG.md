@@ -8,6 +8,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 Release date `UNRELEASED`
 
+- Upgrade Undertow to version `2.3.4.Final`.
+
 ## `1.0.85-rc3`
 
 Release date `2023-02-27`
