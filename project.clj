@@ -1,7 +1,7 @@
 (defproject com.github.strojure/undertow "1.0.89-SNAPSHOT"
   :description "Clojure API to Undertow web server."
   :url "https://github.com/strojure/undertow"
-  :license {:name "The MIT License" :url "http://opensource.org/licenses/MIT"}
+  :license {:name "The Unlicense" :url "https://unlicense.org"}
 
   :dependencies [[io.undertow/undertow-core "2.3.4.Final"]]
 
