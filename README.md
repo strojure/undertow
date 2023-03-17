@@ -5,6 +5,7 @@ Clojure API to Undertow web server.
 [![Clojars Project](https://img.shields.io/clojars/v/com.github.strojure/undertow.svg)](https://clojars.org/com.github.strojure/undertow)
 
 [![cljdoc badge](https://cljdoc.org/badge/com.github.strojure/undertow)](https://cljdoc.org/d/com.github.strojure/undertow)
+[![tests](https://github.com/strojure/undertow/actions/workflows/tests.yml/badge.svg)](https://github.com/strojure/undertow/actions/workflows/tests.yml)
 
 ## Motivation
 
