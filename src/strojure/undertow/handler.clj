@@ -1,6 +1,7 @@
 (ns strojure.undertow.handler
   "Undertow `HttpHandler` functionality and library of standard handlers."
   (:require [strojure.undertow.api.types :as types]
+            [strojure.undertow.handler.csp :as csp]
             [strojure.undertow.handler.session :as session]
             [strojure.undertow.handler.websocket :as websocket])
   (:import (clojure.lang Fn IPersistentMap MultiFn Sequential)
@@ -510,6 +511,41 @@
                                "X-Content-Type-Options" "nosniff"
                                "X-Attribute" (fn x-attribute [_exchange] "VALUE")}})
    (with-exchange identity))
+  )
+
+;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+;;
+;; ## Extra handlers
+;;
+;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+
+(defn security
+  "Returns a new handler which applies collection of web-security related
+  handlers to the `next-handler`.
+
+  Arguments:
+
+  - `next-handler` – a handler to wrap.
+
+  - configuration map with keys:
+
+      - `:csp` – CSP handler config, see [[handler.csp/csp-handler]].
+
+  Example:
+
+      {:type `handler/security :csp {:policy {\"default-scr\" :none}}}
+  "
+  {:arglists '([next-handler {{:keys [policy, report-only, random-nonce-fn, report-callback]} :csp}])
+   :added "1.1"}
+  [next-handler {:keys [csp]}]
+  (cond-> (types/as-handler next-handler)
+    csp (csp/csp-handler csp)))
+
+(define-type `security {:as-wrapper (arity2-wrapper security)
+                        :alias ::security})
+
+(comment
+  (types/as-wrapper {:type `security :csp {:policy {"default-scr" :none}}})
   )
 
 ;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
