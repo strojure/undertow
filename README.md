@@ -235,8 +235,6 @@ The Undertow handler for this case can be configured in different ways:
   )
 ```
 
----
-
 [ring handlers]:
 https://github.com/ring-clojure/ring/wiki/Concepts#handlers
 
@@ -248,3 +246,9 @@ https://cljdoc.org/d/com.github.strojure/undertow/CURRENT/api/strojure.undertow.
 
 [server_stop]:
 https://cljdoc.org/d/com.github.strojure/undertow/CURRENT/api/strojure.undertow.server#stop
+
+---
+
+Authored by [Sergey Trofimov](https://github.com/serioga).
+
+[![license](https://img.shields.io/badge/license-The%20Unlicense-informational)](UNLICENSE)
