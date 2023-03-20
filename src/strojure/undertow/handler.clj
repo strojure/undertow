@@ -581,15 +581,17 @@
                                (when (.contains headers Headers/CONTENT_TYPE)
                                  (.put headers Headers/X_CONTENT_TYPE_OPTIONS "nosniff")))))
     csp (csp/csp-handler csp)
-    hsts (SetHeaderHandler. hsts/header-name (hsts/header-value hsts))
-    referrer-policy (SetHeaderHandler. referrer-policy/header-name
-                                       (referrer-policy/header-value referrer-policy))))
+    hsts (set-response-header {hsts/header-name (hsts/header-value hsts)})
+    referrer-policy (set-response-header {referrer-policy/header-name
+                                          (referrer-policy/header-value referrer-policy)})))
 
 (define-type `security {:as-wrapper (arity2-wrapper security)
                         :alias ::security})
 
 (comment
   (types/as-wrapper {:type `security :csp {:policy {"default-scr" :none}}})
+  (security (with-exchange identity) {:hsts true})
+  (security (with-exchange identity) {:referrer-policy true})
   )
 
 ;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
