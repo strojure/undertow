@@ -2,10 +2,10 @@
   "Undertow `HttpHandler` functionality and library of standard handlers."
   (:require [strojure.undertow.api.types :as types]
             [strojure.undertow.handler.csp :as csp]
-            [strojure.undertow.handler.hsts :as hsts]
-            [strojure.undertow.handler.referrer-policy :as referrer-policy]
             [strojure.undertow.handler.session :as session]
-            [strojure.undertow.handler.websocket :as websocket])
+            [strojure.undertow.handler.websocket :as websocket]
+            [strojure.web-security.hsts :as hsts]
+            [strojure.web-security.referrer-policy :as referrer-policy])
   (:import (clojure.lang Fn IPersistentMap MultiFn Sequential)
            (io.undertow.attribute ExchangeAttribute)
            (io.undertow.server HttpHandler HttpServerExchange)
@@ -581,9 +581,9 @@
                                (when (.contains headers Headers/CONTENT_TYPE)
                                  (.put headers Headers/X_CONTENT_TYPE_OPTIONS "nosniff")))))
     csp (csp/csp-handler csp)
-    hsts (SetHeaderHandler. hsts/header-name (hsts/render-header-value hsts))
+    hsts (SetHeaderHandler. hsts/header-name (hsts/header-value hsts))
     referrer-policy (SetHeaderHandler. referrer-policy/header-name
-                                       (referrer-policy/render-header-value referrer-policy))))
+                                       (referrer-policy/header-value referrer-policy))))
 
 (define-type `security {:as-wrapper (arity2-wrapper security)
                         :alias ::security})

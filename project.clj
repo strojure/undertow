@@ -4,7 +4,7 @@
   :license {:name "The Unlicense" :url "https://unlicense.org"}
 
   :dependencies [[io.undertow/undertow-core "2.3.4.Final"]
-                 [com.github.strojure/web-security "1.0.0-28"]]
+                 [com.github.strojure/web-security "1.1.0-32"]]
 
   :java-source-paths ["src"]
   :javac-options ["-source" "11" "-target" "11"]
