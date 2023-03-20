@@ -1,4 +1,10 @@
 (ns strojure.undertow.handler.referrer-policy
+  "The [Referrer-Policy] HTTP header controls how much referrer information
+  (sent with the Referer header) should be included with requests.
+
+  [Referrer-Policy]:
+  https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Referrer-Policy
+  "
   (:import (clojure.lang Keyword)))
 
 (set! *warn-on-reflection* true)
@@ -6,13 +12,12 @@
 ;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 
 (def ^:const ^String header-name
-  "The Referrer-Policy HTTP header controls how much referrer information (sent
-  with the Referer header) should be included with requests."
+  "Returns \"Referrer-Policy\" string."
   "Referrer-Policy")
 
 (defprotocol ReferrerPolicyHeader
   (render-header-value
-    ^java.lang.String [_]
+    ^java.lang.String [obj]
     "Returns string value for the [Referrer-Policy] response header.
 
     [Referrer-Policy]:

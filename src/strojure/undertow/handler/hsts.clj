@@ -1,19 +1,24 @@
-(ns strojure.undertow.handler.hsts)
+(ns strojure.undertow.handler.hsts
+  "The HTTP [Strict-Transport-Security] response header (often abbreviated as
+  HSTS) informs browsers that the site should only be accessed using HTTPS, and
+  that any future attempts to access it using HTTP should automatically be
+  converted to HTTPS.
+
+  [Strict-Transport-Security]:
+  https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security
+  ")
 
 (set! *warn-on-reflection* true)
 
 ;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 
 (def ^:const ^String header-name
-  "The HTTP `Strict-Transport-Security` response header (often abbreviated as
-  HSTS) informs browsers that the site should only be accessed using HTTPS, and
-  that any future attempts to access it using HTTP should automatically be
-  converted to HTTPS."
+  "Returns \"Strict-Transport-Security\" string."
   "Strict-Transport-Security")
 
 (defprotocol HstsHeader
   (render-header-value
-    ^java.lang.String [_]
+    ^java.lang.String [obj]
     "Returns string value for the [Strict-Transport-Security] response header.
 
     [Strict-Transport-Security]:
