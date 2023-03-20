@@ -4,9 +4,13 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## `1.1.0-98-SNAPSHOT`
+## `1.1.0-104-SNAPSHOT`
 
 Release date `UNRELEASED`
+
+## `1.1.0-103-beta2`
+
+Release date `2023-03-20`
 
 - (feat handler): add `:content-type-options` option in `handler/security` 
 - (feat handler): add `:hsts` option in `handler/security`
