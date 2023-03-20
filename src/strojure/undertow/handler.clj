@@ -6,11 +6,12 @@
             [strojure.undertow.handler.websocket :as websocket])
   (:import (clojure.lang Fn IPersistentMap MultiFn Sequential)
            (io.undertow.attribute ExchangeAttribute)
-           (io.undertow.server HttpHandler)
+           (io.undertow.server HttpHandler HttpServerExchange)
            (io.undertow.server.handlers GracefulShutdownHandler NameVirtualHostHandler PathHandler ProxyPeerAddressHandler RequestDumpingHandler SetHeaderHandler)
            (io.undertow.server.handlers.error SimpleErrorPageHandler)
            (io.undertow.server.handlers.resource ClassPathResourceManager ResourceHandler ResourceManager)
            (io.undertow.server.session SessionAttachmentHandler)
+           (io.undertow.util Headers)
            (io.undertow.websockets WebSocketProtocolHandshakeHandler)
            (org.xnio ChannelListener)))
 
@@ -531,14 +532,28 @@
 
       - `:csp` – CSP handler config, see [[handler.csp/csp-handler]].
 
+      - `:content-type-options` – boolean flag if `[X-Content-Type-Options]: nosniff`
+                                  response header should be added.
+          + Default: `true`.
+          + Response header is only added when `Content-Type` is set.
+
+  [X-Content-Type-Options]:
+  https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Content-Type-Options
+
   Example:
 
       {:type `handler/security :csp {:policy {\"default-scr\" :none}}}
   "
   {:arglists '([next-handler {{:keys [policy, report-only, random-nonce-fn, report-callback]} :csp}])
    :added "1.1"}
-  [next-handler {:keys [csp]}]
+  [next-handler {:keys [content-type-options, csp] :or {content-type-options true}}]
   (cond-> (types/as-handler next-handler)
+    content-type-options (on-response-commit
+                           (fn set-content-type-options
+                             [^HttpServerExchange exchange]
+                             (let [headers (.getResponseHeaders exchange)]
+                               (when (.contains headers Headers/CONTENT_TYPE)
+                                 (.put headers Headers/X_CONTENT_TYPE_OPTIONS "nosniff")))))
     csp (csp/csp-handler csp)))
 
 (define-type `security {:as-wrapper (arity2-wrapper security)
