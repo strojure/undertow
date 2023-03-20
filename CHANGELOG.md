@@ -4,25 +4,19 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## `1.1.0-104-SNAPSHOT`
+## `1.1.1-109-SNAPSHOT`
 
 Release date `UNRELEASED`
 
-- (refactor BREAKING): use hsts and referrer-policy from web-security
-
-## `1.1.0-103-beta2`
+## `1.1.0-108`
 
 Release date `2023-03-20`
 
-- (feat handler): add `:content-type-options` option in `handler/security` 
-- (feat handler): add `:hsts` option in `handler/security`
-- (feat handler): add `:referrer-policy` option in `handler/security`
-
-## `1.1.0-97-beta1`
-
-Release date `2023-03-17`
-
-- (feat handler): add `handler/security` with SCP implementation
+- (feat): add `handler/security` with options:
+  - `:csp` – content security policy header
+  - `:hsts` – Strict-Transport-Security header
+  - `:referrer-policy` – Referrer-Policy header
+  - `:content-type-options` – X-Content-Type-Options header
 
 ## `1.0.92`
 
