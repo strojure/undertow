@@ -2,6 +2,7 @@
   "Undertow `HttpHandler` functionality and library of standard handlers."
   (:require [strojure.undertow.api.types :as types]
             [strojure.undertow.handler.csp :as csp]
+            [strojure.undertow.handler.hsts :as hsts]
             [strojure.undertow.handler.session :as session]
             [strojure.undertow.handler.websocket :as websocket])
   (:import (clojure.lang Fn IPersistentMap MultiFn Sequential)
@@ -532,10 +533,19 @@
 
       - `:csp` – CSP handler config, see [[handler.csp/csp-handler]].
 
+      - `:hsts` – the [Strict-Transport-Security] response header.
+          + Is not set by default, instead I'd recommend to set this header on
+            webapp container/proxy level like nginx.
+          + The `true` value is rendered as \"max-age=31536000\".
+          + The string value is rendered as is.
+
       - `:content-type-options` – boolean flag if `[X-Content-Type-Options]: nosniff`
                                   response header should be added.
           + Default: `true`.
           + Response header is only added when `Content-Type` is set.
+
+  [Strict-Transport-Security]:
+  https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security
 
   [X-Content-Type-Options]:
   https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Content-Type-Options
@@ -549,9 +559,10 @@
   - `X-Frame-Options` is obsoleted by CSP’s `frame-ancestors` directive.
   - `X-XSS-Protection` is non-standard and not supported in modern browsers.
   "
-  {:arglists '([next-handler {{:keys [policy, report-only, random-nonce-fn, report-callback]} :csp}])
+  {:arglists '([next-handler {:keys [csp, hsts, content-type-options]
+                              {:keys [policy, report-only, random-nonce-fn, report-callback]} :csp}])
    :added "1.1"}
-  [next-handler {:keys [content-type-options, csp] :or {content-type-options true}}]
+  [next-handler {:keys [csp, hsts, content-type-options] :or {content-type-options true}}]
   (cond-> (types/as-handler next-handler)
     content-type-options (on-response-commit
                            (fn set-content-type-options
@@ -559,7 +570,8 @@
                              (let [headers (.getResponseHeaders exchange)]
                                (when (.contains headers Headers/CONTENT_TYPE)
                                  (.put headers Headers/X_CONTENT_TYPE_OPTIONS "nosniff")))))
-    csp (csp/csp-handler csp)))
+    csp (csp/csp-handler csp)
+    hsts (SetHeaderHandler. hsts/header-name (hsts/render-header-value hsts))))
 
 (define-type `security {:as-wrapper (arity2-wrapper security)
                         :alias ::security})

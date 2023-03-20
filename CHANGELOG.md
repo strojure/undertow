@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 Release date `UNRELEASED`
 
 - (feat handler): add `:content-type-options` option in `handler/security` 
+- (feat handler): add `:hsts` option in `handler/security`
 
 ## `1.1.0-97-beta1`
 
