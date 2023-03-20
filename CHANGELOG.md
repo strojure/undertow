@@ -10,6 +10,7 @@ Release date `UNRELEASED`
 
 - (feat handler): add `:content-type-options` option in `handler/security` 
 - (feat handler): add `:hsts` option in `handler/security`
+- (feat handler): add `:referrer-policy` option in `handler/security`
 
 ## `1.1.0-97-beta1`
 

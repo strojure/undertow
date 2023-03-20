@@ -3,6 +3,7 @@
   (:require [strojure.undertow.api.types :as types]
             [strojure.undertow.handler.csp :as csp]
             [strojure.undertow.handler.hsts :as hsts]
+            [strojure.undertow.handler.referrer-policy :as referrer-policy]
             [strojure.undertow.handler.session :as session]
             [strojure.undertow.handler.websocket :as websocket])
   (:import (clojure.lang Fn IPersistentMap MultiFn Sequential)
@@ -539,6 +540,13 @@
           + The `true` value is rendered as \"max-age=31536000\".
           + The string value is rendered as is.
 
+      - `:referrer-policy` – the [Referrer-Policy] response header.
+          + Is not set by default, instead I'd recommend to set this header on
+            webapp container/proxy level like nginx.
+          + The `true` value is rendered as \"strict-origin-when-cross-origin\".
+          + The string value is rendered as is.
+          + The keyword is rendered as keyword name.
+
       - `:content-type-options` – boolean flag if `[X-Content-Type-Options]: nosniff`
                                   response header should be added.
           + Default: `true`.
@@ -559,10 +567,12 @@
   - `X-Frame-Options` is obsoleted by CSP’s `frame-ancestors` directive.
   - `X-XSS-Protection` is non-standard and not supported in modern browsers.
   "
-  {:arglists '([next-handler {:keys [csp, hsts, content-type-options]
+  {:arglists '([next-handler {:keys [csp, hsts, referrer-policy, content-type-options]
                               {:keys [policy, report-only, random-nonce-fn, report-callback]} :csp}])
+   :tag HttpHandler
    :added "1.1"}
-  [next-handler {:keys [csp, hsts, content-type-options] :or {content-type-options true}}]
+  [next-handler {:keys [csp, hsts, referrer-policy, content-type-options]
+                 :or {content-type-options true}}]
   (cond-> (types/as-handler next-handler)
     content-type-options (on-response-commit
                            (fn set-content-type-options
@@ -571,7 +581,9 @@
                                (when (.contains headers Headers/CONTENT_TYPE)
                                  (.put headers Headers/X_CONTENT_TYPE_OPTIONS "nosniff")))))
     csp (csp/csp-handler csp)
-    hsts (SetHeaderHandler. hsts/header-name (hsts/render-header-value hsts))))
+    hsts (SetHeaderHandler. hsts/header-name (hsts/render-header-value hsts))
+    referrer-policy (SetHeaderHandler. referrer-policy/header-name
+                                       (referrer-policy/render-header-value referrer-policy))))
 
 (define-type `security {:as-wrapper (arity2-wrapper security)
                         :alias ::security})
