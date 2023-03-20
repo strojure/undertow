@@ -543,6 +543,11 @@
   Example:
 
       {:type `handler/security :csp {:policy {\"default-scr\" :none}}}
+
+  NOTE: Not implemented obsolete headers:
+
+  - `X-Frame-Options` is obsoleted by CSP’s `frame-ancestors` directive.
+  - `X-XSS-Protection` is non-standard and not supported in modern browsers.
   "
   {:arglists '([next-handler {{:keys [policy, report-only, random-nonce-fn, report-callback]} :csp}])
    :added "1.1"}
