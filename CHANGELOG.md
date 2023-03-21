@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 Release date `UNRELEASED`
 
 - (feat api): add type hint to `exchange/get-input-stream`
+- (fix api BREAKING): change `:report-callback` CSP option to `:report-handler`
 
 ## `1.1.0-108`
 

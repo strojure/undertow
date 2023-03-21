@@ -568,7 +568,7 @@
   - `X-XSS-Protection` is non-standard and not supported in modern browsers.
   "
   {:arglists '([next-handler {:keys [csp, hsts, referrer-policy, content-type-options]
-                              {:keys [policy, report-only, random-nonce-fn, report-callback]} :csp}])
+                              {:keys [policy, report-only, random-nonce-fn, report-handler]} :csp}])
    :tag HttpHandler
    :added "1.1"}
   [next-handler {:keys [csp, hsts, referrer-policy, content-type-options]
