@@ -3,7 +3,7 @@
   (:import (io.undertow.server Connectors HttpHandler HttpServerExchange)
            (io.undertow.server.session Session SessionConfig SessionManager)
            (io.undertow.util HeaderMap HttpString)
-           (java.io OutputStream)
+           (java.io InputStream OutputStream)
            (java.util Collection)))
 
 (set! *warn-on-reflection* true)
@@ -83,6 +83,7 @@
 (defn get-input-stream
   "Returns input stream for incomplete request. Starts blocking if necessary but
   does not check if running on IO thread."
+  {:tag InputStream}
   [^HttpServerExchange e]
   (when-not (.isRequestComplete e)
     (when-not (.isBlocking e)

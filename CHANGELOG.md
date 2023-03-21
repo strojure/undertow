@@ -8,6 +8,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 Release date `UNRELEASED`
 
+- (feat api): add type hint to `exchange/get-input-stream`
+
 ## `1.1.0-108`
 
 Release date `2023-03-20`
