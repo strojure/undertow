@@ -391,11 +391,11 @@
 
       - `session-manager` The instance of `SessionManager` or session manager
         configuration map. If not specified then `InMemorySessionManager` is used
-        with default settings (see [[in-memory-session-manager]]).
+        with default settings (see [[handler.session/in-memory-session-manager]]).
 
       - `session-config` The instance of `SessionConfig` or session config
         configuration map. If not specified then `SessionCookieConfig` is used
-        with default settings (see [[session-cookie-config]]).
+        with `HttpOnly` and `SameSite=Lax` (see [[handler.session/session-cookie-config]]).
   "
   {:tag SessionAttachmentHandler}
   [next-handler {:keys [session-manager, session-config]

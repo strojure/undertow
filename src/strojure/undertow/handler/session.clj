@@ -1,6 +1,7 @@
 (ns strojure.undertow.handler.session
   "Session handler functionality."
-  (:import (io.undertow.server.session InMemorySessionManager SecureRandomSessionIdGenerator SessionCookieConfig)))
+  (:import (io.undertow.server.session InMemorySessionManager SecureRandomSessionIdGenerator SessionCookieConfig)
+           (strojure.undertow.session SessionCookieConfigPlus)))
 
 (set! *warn-on-reflection* true)
 
@@ -24,18 +25,26 @@
 ;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 
 (defn session-cookie-config
-  "Returns instance of `SessionCookieConfig` given configuration map."
+  "Returns instance of `io.undertow.server.session.SessionConfig` for given
+  configuration map. By default, the cookie is `HttpOnly` with `SameSite=Lax`."
   {:tag SessionCookieConfig}
   #_{:clj-kondo/ignore [:shadowed-var]}
-  [{:keys [cookie-name, path, domain, discard, secure, http-only, max-age, comment]}]
-  (cond-> (SessionCookieConfig.)
-    cookie-name (.setCookieName cookie-name)
-    path (.setPath path)
-    domain (.setDomain domain)
-    (some? discard) (.setDiscard (boolean discard))
-    (some? secure) (.setSecure (boolean secure))
-    (some? http-only) (.setHttpOnly (boolean http-only))
-    max-age (.setMaxAge max-age)
-    comment (.setComment comment)))
+  [{:keys [cookie-name, path, domain, discard, secure, http-only, same-site, max-age, comment]
+    :or {http-only true, same-site "Lax"}}]
+  (let [config (cond-> (SessionCookieConfigPlus.)
+                 (string? same-site) (.setSameSiteMode (name same-site)))]
+    (cond-> ^SessionCookieConfig config
+      cookie-name (.setCookieName cookie-name)
+      path (.setPath path)
+      domain (.setDomain domain)
+      (some? discard) (.setDiscard (boolean discard))
+      (some? secure) (.setSecure (boolean secure))
+      (some? http-only) (.setHttpOnly (boolean http-only))
+      max-age (.setMaxAge max-age)
+      comment (.setComment comment))))
+
+(comment
+  (session-cookie-config {:same-site "Lax"})
+  )
 
 ;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,

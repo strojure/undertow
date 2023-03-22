@@ -17,10 +17,23 @@ Clojure API to Undertow web server.
 - Reuse Undertow's library of HTTP handlers.
 - Provide declarative description of server configuration.
 - Minimize the impact of implementation on performance.
+- Implement web security recommendations.
 
 ## Companion projects
 
 - Ring adapter https://github.com/strojure/ring-undertow.
+
+## Web security
+
+This library provides implementations:
+
+- Session cookie is `HttpOnly` with `SameSite=Lax` by default.
+
+- The [handler/security] implements:
+  - `Content-SecurityPolicy` response header with `report-uri` handler.
+  - `Strict-Transport-Security` response header.
+  - `Referrer-Policy` response header.
+  - `X-Content-Type-Options` response header (enabled by default).
 
 ## Usage
 
@@ -247,6 +260,9 @@ https://cljdoc.org/d/com.github.strojure/undertow/CURRENT/api/strojure.undertow.
 
 [server_stop]:
 https://cljdoc.org/d/com.github.strojure/undertow/CURRENT/api/strojure.undertow.server#stop
+
+[handler/security]:
+https://cljdoc.org/d/com.github.strojure/undertow/CURRENT/api/strojure.undertow.handler#security
 
 ---
 
