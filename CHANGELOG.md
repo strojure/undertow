@@ -4,9 +4,13 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## `1.3.0-114-SNAPSHOT`
+## `1.3.1-117-SNAPSHOT`
 
 Release date `UNRELEASED`
+
+## `1.3.0-116`
+
+Release date `2023-03-22`
 
 - (feat session): use `HttpOnly` and `SameSite=Lax` in session cookie defaults
 
