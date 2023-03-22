@@ -99,13 +99,11 @@
           (handler/virtual-host {:host {\"webapi.company.com\" (my-handler :webapi-handler)}})
           ;; Supplemental useful handlers.
           (handler/simple-error-page)
-          (handler/proxy-peer-address)
-          (handler/graceful-shutdown))
+          (handler/proxy-peer-address))
       
   Or same handler can be written declarative:
   
       [;; Supplemental useful handlers.
-       {:type handler/graceful-shutdown}
        {:type handler/proxy-peer-address}
        {:type handler/simple-error-page}
        ;; The handler for webapi hostname.
