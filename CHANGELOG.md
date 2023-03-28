@@ -4,9 +4,13 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## `1.3.1-117-SNAPSHOT`
+## `1.3.2-121-SNAPSHOT`
 
 Release date `UNRELEASED`
+
+## `1.3.1-120`
+
+Release date `2023-03-28`
 
 - (deps): upgrade undertow "2.3.5.Final"
 - (deps): upgrade strojure/web-security "1.2.0-38"
