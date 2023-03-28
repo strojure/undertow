@@ -3,7 +3,7 @@
   :url "https://github.com/strojure/undertow"
   :license {:name "The Unlicense" :url "https://unlicense.org"}
 
-  :dependencies [[io.undertow/undertow-core "2.3.4.Final"]
+  :dependencies [[io.undertow/undertow-core "2.3.5.Final"]
                  [com.github.strojure/web-security "1.1.0-32"]]
 
   :java-source-paths ["src"]

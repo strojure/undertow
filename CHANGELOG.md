@@ -8,6 +8,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 Release date `UNRELEASED`
 
+- (deps): upgrade undertow "2.3.5.Final"
+
 ## `1.3.0-116`
 
 Release date `2023-03-22`
