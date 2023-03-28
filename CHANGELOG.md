@@ -9,6 +9,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 Release date `UNRELEASED`
 
 - (deps): upgrade undertow "2.3.5.Final"
+- (deps): upgrade strojure/web-security "1.2.0-38"
+    + (feat): generating CSP nonce changed from 18 to 16 bytes, URL encoded
 
 ## `1.3.0-116`
 
