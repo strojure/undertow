@@ -4,9 +4,15 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## `1.3.2-121-SNAPSHOT`
+## `1.4.0-SNAPSHOT+122`
 
 Release date `UNRELEASED`
+
+- (feat api exchange): add `exchange/dispatching` macro
+  - add `exchange/throw-in` function
+  - add `exchange/dispatch-runnable` function
+  - deprecate `exchange/async-dispatch` macro
+  - deprecate `exchange/async-throw` function
 
 ## `1.3.1-120`
 
@@ -14,7 +20,7 @@ Release date `2023-03-28`
 
 - (deps): upgrade undertow "2.3.5.Final"
 - (deps): upgrade strojure/web-security "1.2.0-38"
-    + (feat): generating CSP nonce changed from 18 to 16 bytes, URL encoded
+  + (feat): generating CSP nonce changed from 18 to 16 bytes, URL encoded
 
 ## `1.3.0-116`
 

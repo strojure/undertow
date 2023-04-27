@@ -4,25 +4,58 @@
            (io.undertow.server.session Session SessionConfig SessionManager)
            (io.undertow.util HeaderMap HttpString)
            (java.io InputStream OutputStream)
-           (java.util Collection)))
+           (java.util Collection)
+           (java.util.concurrent Executor)))
 
 (set! *warn-on-reflection* true)
 
 ;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 
+(defn throw-in
+  "Throws `throwable` in context of request handling to allow server to handle
+  error."
+  {:added "v1.4"}
+  [exchange, throwable]
+  (-> (reify HttpHandler (handleRequest [_ _] (throw throwable)))
+      (Connectors/executeRootHandler exchange)))
+
+(defn dispatch-runnable
+  "Dispatches execution of `runnable` to the `executor` or XNIO worker thread
+  pool. See also `io.undertow.server.HttpHandler/dispatch`."
+  {:added "v1.4"}
+  ([exchange, runnable]
+   (.dispatch ^HttpServerExchange exchange ^Runnable runnable))
+  ([exchange, executor, runnable]
+   (.dispatch ^HttpServerExchange exchange ^Executor executor ^Runnable runnable)))
+
+(defmacro dispatching
+  "Executes `expr` dispatching task using [[dispatch-runnable]]. Throws caught
+  exceptions with [[throw-in]]."
+  {:added "v1.4"}
+  ([exchange, expr]
+   `(dispatching ~exchange nil ~expr))
+  ([exchange, executor, expr]
+   `(let [e# ~exchange]
+      (->> (^:once fn* [] (try ~expr (catch Throwable t# (throw-in e# t#))))
+           (dispatch-runnable e# ~executor)))))
+
 (defmacro async-dispatch
   "Dispatches execution of task `expr` to the XNIO worker thread pool. Required
   for async operations with server exchange."
+  {:deprecated "v1.4"}
   [exchange expr]
   `(-> ~(with-meta exchange {:tag 'io.undertow.server.HttpServerExchange})
        (.dispatch ^Runnable (^:once fn* [] ~expr))))
 
 (defn async-throw
   "Rethrows `throwable` in context of request handling to allow server to handle
-  error. Required for async operations with server exchange."
+  error. Required for async operations with server exchange.
+
+  Deprecated, renamed to [[throw-in]].
+  "
+  {:deprecated "v1.4"}
   [exchange, throwable]
-  (-> (reify HttpHandler (handleRequest [_ _] (throw throwable)))
-      (Connectors/executeRootHandler exchange)))
+  (throw-in exchange throwable))
 
 ;;,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 

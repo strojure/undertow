@@ -1,4 +1,4 @@
-(defproject com.github.strojure/undertow "1.3.2-121-SNAPSHOT"
+(defproject com.github.strojure/undertow "1.4.0-SNAPSHOT+122"
   :description "Clojure API to Undertow web server."
   :url "https://github.com/strojure/undertow"
   :license {:name "The Unlicense" :url "https://unlicense.org"}
