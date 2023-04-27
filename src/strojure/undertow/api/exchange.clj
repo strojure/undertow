@@ -1,5 +1,8 @@
 (ns strojure.undertow.api.exchange
-  "Helper functions to work with `HttpServerExchange`."
+  "Helper functions to work with [HttpServerExchange].
+
+  [HttpServerExchange]: https://undertow.io/javadoc/2.1.x/io/undertow/server/HttpServerExchange.html
+  "
   (:import (io.undertow.server Connectors HttpHandler HttpServerExchange)
            (io.undertow.server.session Session SessionConfig SessionManager)
            (io.undertow.util HeaderMap HttpString)
@@ -103,6 +106,7 @@
 (defn start-blocking*
   "Custom version of the `startBlocking` method which avoids exception in
   completed requests."
+  {:arglists '([exchange])}
   [^HttpServerExchange e]
   ;; We close request channel in completed request to avoid exception caused by
   ;; `DefaultBlockingHttpExchange.getInputStream`:
@@ -116,7 +120,7 @@
 (defn get-input-stream
   "Returns input stream for incomplete request. Starts blocking if necessary but
   does not check if running on IO thread."
-  {:tag InputStream}
+  {:tag InputStream :arglists '([exchange])}
   [^HttpServerExchange e]
   (when-not (.isRequestComplete e)
     (when-not (.isBlocking e)
@@ -125,7 +129,7 @@
 
 (defn new-output-stream
   "Returns new output stream. Starts blocking if necessary."
-  {:tag OutputStream}
+  {:tag OutputStream :arglists '([exchange])}
   [^HttpServerExchange e]
   (start-blocking* e)
   (.getOutputStream e))
