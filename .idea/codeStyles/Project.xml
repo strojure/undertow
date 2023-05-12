@@ -25,7 +25,6 @@
       <option name="KEEP_FIRST_COLUMN_COMMENT" value="false" />
       <option name="CLASS_BRACE_STYLE" value="2" />
       <option name="ELSE_ON_NEW_LINE" value="true" />
-      <option name="ALIGN_MULTILINE_CHAINED_METHODS" value="true" />
       <option name="ALIGN_MULTILINE_PARAMETERS_IN_CALLS" value="true" />
       <option name="ALIGN_MULTILINE_BINARY_OPERATION" value="true" />
       <option name="ALIGN_MULTILINE_ASSIGNMENT" value="true" />
@@ -33,6 +32,7 @@
       <option name="ALIGN_MULTILINE_EXTENDS_LIST" value="true" />
       <option name="ALIGN_GROUP_FIELD_DECLARATIONS" value="true" />
       <option name="ALIGN_CONSECUTIVE_ASSIGNMENTS" value="true" />
+      <option name="SPACE_AFTER_COMMA_IN_TYPE_ARGUMENTS" value="false" />
       <option name="SPACE_WITHIN_METHOD_CALL_PARENTHESES" value="true" />
       <option name="SPACE_WITHIN_BRACES" value="true" />
       <option name="SPACE_WITHIN_ARRAY_INITIALIZER_BRACES" value="true" />
