@@ -4,9 +4,13 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## `1.4.1-126-SNAPSHOT`
+## `1.5.1-SNAPSHOT`
 
 Release date `UNRELEASED`
+
+## `1.5.0`
+
+Release date `2026-06-08`
 
 - (docs api exchange): unify arglists, add a link to Javadocs
 - (chore): upgrade an Undertow version to "2.4.1.Final"
