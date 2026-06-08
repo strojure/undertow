@@ -4,7 +4,7 @@
             [strojure.undertow.api.types :as types])
   (:import (clojure.lang IPersistentMap)
            (io.undertow Undertow Undertow$Builder UndertowOptions)
-           (org.xnio Options)
+           (org.xnio Option Options)
            (strojure.undertow.api.types ServerInstance)))
 
 (set! *warn-on-reflection* true)
@@ -181,6 +181,14 @@
      [option (coerce-fn v)])))
 
 ;; ## Options ##
+
+;; ### Support org.xnio.Option directly without multimethod and value coercion ###
+
+(defmethod types/as-option :default
+  [option v]
+  (if (instance? Option option)
+    [option v]
+    (throw (IllegalArgumentException. (str "Invalid Undertow option: " option)))))
 
 ;; ### XNIO workers ###
 
