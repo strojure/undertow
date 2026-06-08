@@ -12,6 +12,7 @@ Release date `UNRELEASED`
 - (chore): upgrade an Undertow version to "2.4.1.Final"
   + (refactor): fix reflection warnings after undertow upgrade
   + (feat): require Java version 17+
+- (feat): support direct use of `org.xnio.Option` https://github.com/strojure/undertow/issues/2
 
 ## `1.4.0-125`
 
