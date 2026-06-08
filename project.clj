@@ -7,7 +7,7 @@
                  [com.github.strojure/web-security "1.2.0-38"]]
 
   :java-source-paths ["src"]
-  :javac-options ["-source" "11" "-target" "11"]
+  :javac-options ["--release" "17"]
 
   :profiles {:provided {:dependencies [[org.clojure/clojure "1.12.5"]]}
              :dev,,,,, {:dependencies [;; Testing HTTP requests
