@@ -8,7 +8,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 Release date `UNRELEASED`
 
-- (docs api exchange): unify arglists, add link to javadocs
+- (docs api exchange): unify arglists, add a link to Javadocs
+- (chore): upgrade an Undertow version to "2.4.1.Final"
+  + (refactor): fix reflection warnings after undertow upgrade
+  + (feat): require Java version 17+
 
 ## `1.4.0-125`
 

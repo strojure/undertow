@@ -51,7 +51,7 @@
     (let [cookie (-> (exec {:handler (session-config-handler {:secure true
                                                               :same-site "none"})})
                      :headers (get "set-cookie"))]
-      (test/is (string/includes? cookie "secure"))
+      (test/is (string/includes? cookie "Secure"))
       (test/is (string/includes? cookie "SameSite=None")))
 
     (let [cookie (-> (exec {:handler (session-config-handler {:http-only false
@@ -59,7 +59,7 @@
                                                               :same-site nil})})
                      :headers (get "set-cookie"))]
       (test/is (not (string/includes? cookie "HttpOnly")))
-      (test/is (not (string/includes? cookie "secure")))
+      (test/is (not (string/includes? cookie "Secure")))
       (test/is (not (string/includes? cookie "SameSite"))))
 
     (let [cookie (-> (exec {:handler (session-config-handler {:same-site false})})

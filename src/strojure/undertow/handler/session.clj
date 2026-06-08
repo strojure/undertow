@@ -31,17 +31,17 @@
   #_{:clj-kondo/ignore [:shadowed-var]}
   [{:keys [cookie-name, path, domain, discard, secure, http-only, same-site, max-age, comment]
     :or {http-only true, same-site "Lax"}}]
-  (let [config (cond-> (SessionCookieConfigPlus.)
+  (let [config (cond-> (new SessionCookieConfigPlus)
                  (string? same-site) (.setSameSiteMode (name same-site)))]
     (cond-> ^SessionCookieConfig config
-      cookie-name (.setCookieName cookie-name)
-      path (.setPath path)
-      domain (.setDomain domain)
-      (some? discard) (.setDiscard (boolean discard))
-      (some? secure) (.setSecure (boolean secure))
-      (some? http-only) (.setHttpOnly (boolean http-only))
-      max-age (.setMaxAge max-age)
-      comment (.setComment comment))))
+      cookie-name       ^SessionCookieConfig (.setCookieName cookie-name)
+      path              ^SessionCookieConfig (.setPath path)
+      domain            ^SessionCookieConfig (.setDomain domain)
+      (some? discard)   ^SessionCookieConfig (.setDiscard (boolean discard))
+      (some? secure)    ^SessionCookieConfig (.setSecure (boolean secure))
+      (some? http-only) ^SessionCookieConfig (.setHttpOnly (boolean http-only))
+      max-age           ^SessionCookieConfig (.setMaxAge max-age)
+      comment           ^SessionCookieConfig (.setComment comment))))
 
 (comment
   (session-cookie-config {:same-site "Lax"})
